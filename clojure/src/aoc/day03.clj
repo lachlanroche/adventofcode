@@ -1,20 +1,28 @@
 (ns aoc.day02)
 
 (defn op-right
-  [[x y] n]
-  (map #(vector (+ x %) y) (range 1 (+ 1 n))))
+  [xy n]
+  (let [[x y] xy
+        i (:step (meta xy))]
+    (map #(with-meta (vector (+ x %) y) {:step (+ % i)}) (range 1 (+ 1 n)))))
 
 (defn op-left
-  [[x y] n]
-  (map #(vector (- x %) y) (range 1 (+ 1 n))))
+  [xy n]
+  (let [[x y] xy
+        i (:step (meta xy))]
+    (map #(with-meta (vector (- x %) y) {:step (+ % i)}) (range 1 (+ 1 n)))))
 
 (defn op-up
-  [[x y] n]
-  (map #(vector x (+ y %)) (range 1 (+ 1 n))))
+  [xy n]
+  (let [[x y] xy
+        i (:step (meta xy))]
+    (map #(with-meta (vector x (+ y %)) {:step (+ % i)}) (range 1 (+ 1 n)))))
 
 (defn op-down
-  [[x y] n]
-  (map #(vector x (- y %)) (range 1 (+ 1 n))))
+  [xy n]
+  (let [[x y] xy
+        i (:step (meta xy))]
+    (map #(with-meta (vector x (- y %)) {:step (+ % i)}) (range 1 (+ 1 n)))))
 
 (defn op-noop
   [xy _]
@@ -41,7 +49,7 @@
 
 (defn wire-points
   [ops]
-  (let [[_ points] (reduce wire-op [[0 0] #{}] ops)]
+  (let [[_ points] (reduce wire-op [(with-meta [0 0] {:step 0}) #{}] ops)]
     points))
 
 (defn abs
