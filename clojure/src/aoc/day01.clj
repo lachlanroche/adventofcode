@@ -4,6 +4,14 @@
   [mass]
   (- (quot mass 3) 2))
 
+(defn fuel-for-module
+  ([mass]
+  (fuel-for-module mass 0))
+  ([mass acc]
+    (let [fuel (fuel-for-mass mass)]
+      (if (>= 0 fuel)
+        acc
+        (recur fuel (+ fuel acc))))))
 
 (defn part1
   []
@@ -20,4 +28,6 @@
   (fuel-for-mass 1969)
   (fuel-for-mass 100756)
   (part1)
-
+  (fuel-for-module 14)
+  (fuel-for-module 1969)
+  (fuel-for-module 100756)
