@@ -1,4 +1,5 @@
-(ns aoc.day02)
+(ns aoc.day02
+  (:require [clojure.math.combinatorics :as combol]))
 
 (defn op-add
   [a b]
@@ -59,6 +60,19 @@
   []
   (run-program (load-program) 12 2))
 
+(defn part2
+  []
+  (let [program (load-program)
+        nvs (combol/permuted-combinations (range 100) 2)]
+    (loop [nvs nvs]
+      (let [nv (first nvs)
+            n (get nv 0)
+            v (get nv 1)
+            result (run-program program n v)]
+        (if (= 19690720 result)
+          (+ (* 100 n) v)
+          (recur (rest nvs)))))))
+
 (step [1,0,0,0,99] 0)
 (step [2,0,0,0,99] 0)
 (step [2,0,0,0,99] 4)
@@ -67,3 +81,4 @@
 (program [2,4,4,5,99,0])
 (program [1,1,1,4,99,5,6,0,99])
 (part1)
+(part2)
