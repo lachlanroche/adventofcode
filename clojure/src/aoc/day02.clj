@@ -38,14 +38,18 @@
        mem
        (recur (apply assoc mem result) (+ 4 offset))))))
 
-
-(defn run-program
-  [noun verb]
+(defn load-program
+  []
   (let [numbers (-> "aoc/day02.txt"
                     clojure.java.io/resource
                     slurp
                     (clojure.string/split #"[,\n]"))
-        mem (vec (map #(Integer/parseInt %) numbers))
+        mem (vec (map #(Integer/parseInt %) numbers))]
+    mem))
+
+(defn run-program
+  [mem noun verb]
+  (let [
         mem (assoc mem 1 noun)
         mem (assoc mem 2 verb)
         mem (program mem)]
@@ -53,7 +57,7 @@
 
 (defn part1
   []
-  (run-program 12 2))
+  (run-program (load-program) 12 2))
 
 (step [1,0,0,0,99] 0)
 (step [2,0,0,0,99] 0)
