@@ -61,6 +61,15 @@
        (map manhattan)
        (apply min)))
 
+(defn part1
+  []
+  (->> "aoc/day03.txt"
+      clojure.java.io/resource
+      slurp
+      clojure.string/split-lines
+      (map #(clojure.string/split % #","))
+      (apply wire-cross-distance)))
+
 (op-right [0 0] 2)
 (op-left [0 0] 2)
 (op-up [0 0] 2)
