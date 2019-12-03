@@ -13,6 +13,16 @@
         acc
         (recur fuel (+ fuel acc))))))
 
+(defn fuel-for-spacecraft
+  [fuel-fn]
+  (->>
+   "aoc/day01.txt"
+   clojure.java.io/resource
+   slurp
+   clojure.string/split-lines
+   (map #(Integer/parseInt %))
+   (reduce #(+ % (fuel-fn %2)) 0)))
+
 (defn part1
   []
   (->>
@@ -23,6 +33,10 @@
    (map #(Integer/parseInt %))
    (reduce #(+ % (fuel-for-mass %2)) 0)))
 
+(defn part2
+  []
+  (fuel-for-spacecraft fuel-for-module))
+
   (fuel-for-mass 12)
   (fuel-for-mass 14)
   (fuel-for-mass 1969)
@@ -31,3 +45,4 @@
   (fuel-for-module 14)
   (fuel-for-module 1969)
   (fuel-for-module 100756)
+  (part2)
