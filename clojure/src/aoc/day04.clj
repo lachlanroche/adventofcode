@@ -18,5 +18,23 @@
        (filter (partial password? has-repeat?))
        count))
 
-(part1)
+(defn has-double?
+  [s]
+  (->> s
+       (partition-by identity)
+       (map #(hash-map (first %) (count %)))
+       (into {})
+       (some #(= 2 (val %)))
+     ))
 
+(defn part2
+  []
+  (->> (range 231832 767347)
+       (map str)
+       (filter (partial password? has-double?))
+       count))
+
+(comment
+(part1)
+(part2)
+)
