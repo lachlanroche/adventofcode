@@ -1,28 +1,20 @@
 (ns aoc.day02)
 
 (defn op-right
-  [xy n]
-  (let [[x y] xy
-        i (:step (meta xy))]
-    (map #(with-meta (vector (+ x %) y) {:step (+ % i)}) (range 1 (+ 1 n)))))
+  [[x y] n]
+  (map #(vector (+ x %) y) (range 1 (+ 1 n))))
 
 (defn op-left
-  [xy n]
-  (let [[x y] xy
-        i (:step (meta xy))]
-    (map #(with-meta (vector (- x %) y) {:step (+ % i)}) (range 1 (+ 1 n)))))
+  [[x y] n]
+  (map #(vector (- x %) y) (range 1 (+ 1 n))))
 
 (defn op-up
-  [xy n]
-  (let [[x y] xy
-        i (:step (meta xy))]
-    (map #(with-meta (vector x (+ y %)) {:step (+ % i)}) (range 1 (+ 1 n)))))
+  [[x y] n]
+  (map #(vector x (+ y %)) (range 1 (+ 1 n))))
 
 (defn op-down
-  [xy n]
-  (let [[x y] xy
-        i (:step (meta xy))]
-    (map #(with-meta (vector x (- y %)) {:step (+ % i)}) (range 1 (+ 1 n)))))
+  [[x y] n]
+  (map #(vector x (- y %)) (range 1 (+ 1 n))))
 
 (defn op-noop
   [xy _]
@@ -44,12 +36,12 @@
   [[xy points] op]
   (let [new (eval-op xy op)
         xy (if (empty? new) xy (last new))
-        points (into points new)]
+        points (apply conj points new)]
     [xy points]))
 
 (defn wire-points
   [ops]
-  (let [[_ points] (reduce wire-op [(with-meta [0 0] {:step 0}) #{}] ops)]
+  (let [[_ points] (reduce wire-op [[0 0] []] ops)]
     points))
 
 (defn abs
@@ -65,7 +57,7 @@
 
 (defn wire-cross-distance
   [w1 w2]
-  (->> (clojure.set/intersection (wire-points w1) (wire-points w2))
+  (->> (clojure.set/intersection (set (wire-points w1)) (set (wire-points w2)))
        (map manhattan)
        (apply min)))
 
