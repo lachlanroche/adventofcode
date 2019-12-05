@@ -24,7 +24,13 @@
   [mem mode a val]
   #_(tap> ["poke" mode a val])
   #_(tap> mem)
-  (cpu-poke-assoc mem a val))
+  (cond
+    (= mode 0)
+    (cpu-poke-assoc mem (get mem a) val))
+    (= mode 1)
+    (cpu-poke-assoc mem a val))
+    ))
+
 
 (defn cpu-input
   [in]
@@ -39,7 +45,7 @@
   (let [a (cpu-peek mem ma a)
         b (cpu-peek mem mb b)
         result (+ a b)
-        mem (cpu-poke mem mz z result)]
+        mem (cpu-poke mem 1 z result)]
     [mem in out (+ 4 ip)]))
 
 (defn op-mul
@@ -47,13 +53,13 @@
   (let [a (cpu-peek mem ma a)
         b (cpu-peek mem mb b)
         result (* a b)
-        mem (cpu-poke mem mz z result)]
+        mem (cpu-poke mem 1 z result)]
     [mem in out (+ 4 ip)]))
 
 (defn op-input
   [[z] [mz] [mem in out ip]]
   (let [[result in] (cpu-input in)
-        mem (cpu-poke mem mz z result)]
+        mem (cpu-poke mem 1 z result)]
     [mem in out (+ 2 ip)]))
 
 (defn op-output
@@ -84,7 +90,7 @@
   (let [a (cpu-peek mem ma a)
         b (cpu-peek mem mb b)
         result (if (< a b) 1 0)
-        mem (cpu-poke mem mz z result)]
+        mem (cpu-poke mem 1 z result)]
   [mem in out (+ 4 ip)]))
 
 (defn op-equals
@@ -92,7 +98,7 @@
   (let [a (cpu-peek mem ma a)
         b (cpu-peek mem mb b)
         result (if (= a b) 1 0)
-        mem (cpu-poke mem mz z result)]
+        mem (cpu-poke mem 1 z result)]
   [mem in out (+ 4 ip)]))
 
 (defn op-halt
