@@ -1,7 +1,6 @@
 (ns aoc.day05
   (:require [clojure.string :as string]
-            [clojure.java.io :as io]
-            [aoc.day02 :as intcode]))
+            [clojure.java.io :as io]))
 
 (defn cpu-peek
   [mem mode a]
