@@ -34,32 +34,32 @@
   (conj out a))
 
 (defn op-add
-  [[a b z] [ma mb mz] [mem in out]]
+  [[a b z] [ma mb mz] [mem in out ip]]
   (let [a (cpu-peek mem ma a)
         b (cpu-peek mem mb b)
         result (+ a b)
         mem (cpu-poke mem mz z result)]
-    [mem in out]))
+    [mem in out (+ 4 ip)]))
 
 (defn op-mul
-  [[a b z] [ma mb mz] [mem in out]]
+  [[a b z] [ma mb mz] [mem in out ip]]
   (let [a (cpu-peek mem ma a)
         b (cpu-peek mem mb b)
         result (* a b)
         mem (cpu-poke mem mz z result)]
-    [mem in out]))
+    [mem in out (+ 4 ip)]))
 
 (defn op-input
-  [[z] [mz] [mem in out]]
+  [[z] [mz] [mem in out ip]]
   (let [[result in] (cpu-input in)
         mem (cpu-poke mem mz z result)]
-    [mem in out]))
+    [mem in out (+ 2 ip)]))
 
 (defn op-output
-  [[z] [mz] [mem in out]]
+  [[z] [mz] [mem in out ip]]
   (let [result (cpu-peek mem mz z)
         out (cpu-output out result)]
-    [mem in out]))
+    [mem in out (+ 2 ip)]))
 
 (defn op-halt
   [_ _ _]
@@ -83,11 +83,9 @@
         op (get op-map opcode (get op-map 99))
         op-fn (:fn op)
         op-argc (:argc op)
-        op-sz (+ 1 (:argc op))
         ]
     {:raw opcode
      :mode [ma mb mc]
-     :size op-sz
      :argc op-argc
      :fn op-fn
      }))
@@ -99,16 +97,15 @@
    (let [op (cpu-decode (get mem offset))
          op-fn (:fn op)
          op-argc (:argc op)
-         op-size (:size op)
          op-mode (:mode op)]
      ;(tap> op)
      ;(tap> offset)
      ;(tap> (vec (take op-argc (drop (+ 1 offset) mem))))
      (if (= op-halt op-fn)
-       [mem nil out]
-       (let [[mem in out] (op-fn (vec (take op-argc (drop (+ 1 offset) mem))) op-mode [mem in out])]
+       [mem nil out offset]
+       (let [[mem in out offset] (op-fn (vec (take op-argc (drop (+ 1 offset) mem))) op-mode [mem in out offset])]
          ;(tap> [mem in out])
-         (recur [mem in out] (+ op-size offset)))))))
+         (recur [mem in out] offset))))))
 
 (comment
 (program [[3 0 4 0 99] [9] []])
