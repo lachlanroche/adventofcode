@@ -1,5 +1,5 @@
 (ns aoc.day07
-  (:require [clojure.string :as string]
+  (:require [clojure.string :as str]
             [clojure.java.io :as io]
             [clojure.math.combinatorics :as combo]))
 
@@ -151,18 +151,10 @@
 
 (defn program-compile
   [s]
-  (let [numbers (string/split s #"[,\n]")
+  (let [numbers (str/split s #"[,\n]")
         mem (vec (map #(Integer/parseInt %) numbers))
         ]
     mem))
-
-(defn run-program
- ([s]
-  (run-program s [] []))
- ([s in]
-  (run-program s in []))
- ([s in out]
-  (program [(program-compile s) in out])))
 
 (defn run-program-phase
   [prog phase in]
@@ -180,7 +172,7 @@
       out
       (recur prog phases out))))
 
-(defn run-programm-all-phases
+(defn run-program-all-phases
   [prog phases]
   (->> (combo/permutations phases)
        (map #(vector (run-program-phase-list prog % [0]) %))
@@ -189,7 +181,7 @@
 (defn part1-run
   [s]
   (let [p (program-compile s)
-        outmap (run-programm-all-phases p [0 1 2 3 4])
+        outmap (run-program-all-phases p [0 1 2 3 4])
         outmap (sort #(> (ffirst %1) (ffirst %2)) outmap)
         ]
     (first outmap)))
