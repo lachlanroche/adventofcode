@@ -145,9 +145,9 @@
      #_(tap> (vec (take op-argc (drop (+ 1 offset) mem))))
      (cond
        (= op-halt op-fn)
-       [mem in out offset]
+       [[mem in out] offset]
        (and (= op-input op-fn) (empty? in))
-       [mem in out offset]
+       [[mem in out] offset]
        :else
        (let [[mem in out offset] (op-fn (vec (take op-argc (drop (+ 1 offset) mem))) op-mode [mem in out offset])]
          #_(tap> [mem in out])
