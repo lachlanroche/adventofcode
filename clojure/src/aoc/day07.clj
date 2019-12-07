@@ -143,11 +143,25 @@
      #_(tap> op)
      #_(tap> offset)
      #_(tap> (vec (take op-argc (drop (+ 1 offset) mem))))
-     (if (= op-halt op-fn)
-       [mem nil out offset]
+     (cond
+       (= op-halt op-fn)
+       [mem in out offset]
+       (and (= op-input op-fn) (empty? in))
+       [mem in out offset]
+       :else
        (let [[mem in out offset] (op-fn (vec (take op-argc (drop (+ 1 offset) mem))) op-mode [mem in out offset])]
          #_(tap> [mem in out])
          (recur [mem in out] offset))))))
+
+(defn program-stopped?
+  [[mem in out] offset]
+   (let [op (cpu-decode (get mem offset))
+         op-fn (:fn op)]
+     (= op-halt op-fn)))
+
+(defn program-running?
+  [mio offset]
+  (not (program-stopped mio offset)))
 
 (defn program-compile
   [s]
