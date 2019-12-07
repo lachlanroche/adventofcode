@@ -217,3 +217,69 @@
 (part1-run "3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0")
 (part1)
 )
+
+(defn run-program-amps
+  ([prog buffers]
+   (let [n (count buffers)]
+     (run-program-amps (take n (repeat prog)) buffers (take n (repeat 0)))))
+  ([progs buffers offsets]
+   #_(tap> "run-program-amps")
+   (let [progs (vec progs)
+         buffers (vec buffers)
+         offsets (vec offsets)
+         n (count progs)
+         running? (fn [i]
+                    (and (program-running? (get progs i) (get offsets i))
+                         (not (empty? (get buffers i)))))
+         i (some #(if (running? %) % nil) (range 0 n))]
+     (if (nil? i)
+       buffers
+       (let [j (+ 1 i)
+             j (mod j 5)
+             mem (get progs i)
+             in (get buffers i)
+             out (get buffers j)
+             offset (get offsets i)
+             [mio offset] (program [mem in out] offset)
+             progs (assoc progs i (get mio 0))
+             buffers (assoc buffers i (get mio 1))
+             buffers (assoc buffers j (get mio 2))
+             offsets (assoc offsets i offset)
+             ]
+         (do
+           (recur progs buffers offsets)))))))
+
+(defn run-program-amps-with-phases
+  [prog phases]
+   (let [in [0]
+         b0 (concat (first phases) in)
+         buffers (concat [b0] (rest phases))
+         ]
+     (ffirst (run-program-amps prog buffers))))
+
+(defn run-program-amps-with-phases-combos
+  [prog phases]
+  (let [phases-list (combo/permutations phases)
+        outmap (map #(vector (run-program-amps-with-phases prog %) %) phases-list)
+        outmap (sort #(> (first %1) (first %2)) outmap)
+        ]
+    (first outmap)))
+
+(defn part2
+  []
+  (let [s (-> "aoc/day07.txt"
+              io/resource
+              slurp)
+        prog (program-compile s)
+        ]
+    (run-program-amps-with-phases-combos prog [[5] [6] [7] [8] [9]])))
+
+(comment
+ (part2)
+(run-program-amps-with-phases-combos
+ (program-compile "3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5")
+ [[5] [6] [7] [8] [9]])
+(run-program-amps-with-phases-combos
+ (program-compile "3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10")
+ [[9] [7] [8] [5] [6]])
+)
