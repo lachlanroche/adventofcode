@@ -154,14 +154,17 @@
          (recur [mem in out] offset))))))
 
 (defn program-stopped?
-  [[mem in out] offset]
-   (let [op (cpu-decode (get mem offset))
-         op-fn (:fn op)]
-     (= op-halt op-fn)))
+  [mem offset]
+  #_(tap> "program-stopped?")
+  #_(tap> [offset (get mem offset)])
+  (let [op (cpu-decode (get mem offset))
+        op-fn (:fn op)]
+    #_(tap> (not= op-halt op-fn))
+    (= op-halt op-fn)))
 
 (defn program-running?
-  [mio offset]
-  (not (program-stopped mio offset)))
+  [mem offset]
+  (not (program-stopped? mem offset)))
 
 (defn program-compile
   [s]
