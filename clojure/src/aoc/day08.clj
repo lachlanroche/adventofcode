@@ -39,3 +39,40 @@
 (comment
 (part1)
 )
+
+(defn pixel-color
+  [colors]
+  (->> colors
+       (filter #(not= \2 %))
+       first))
+
+(defn image-parse
+  [s w h]
+  (let [layers (partition (* w h) s)
+        layerv (apply map vector layers)
+        pixels (map pixel-color layerv)
+        ]
+    {:pixels pixels :w w :h h}))
+
+(defn image-string
+  [{:keys [pixels w h]}]
+  (let [m {\0 " " \1 "*" \2 " "}]
+    (->> pixels
+         (map #(get m %))
+         (partition w)
+         (map #(apply str %))
+         (str/join "\n")
+         )))
+
+(defn part2
+  []
+  (let [s (-> "aoc/day08.txt"
+              io/resource
+              slurp)
+        img (image-parse s 25 6)
+        ]
+    (image-string img)))
+
+(comment
+(part2)
+)
