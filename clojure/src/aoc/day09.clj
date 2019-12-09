@@ -225,6 +225,17 @@
 
 (part1)
 
+(defn part2
+  []
+  (let [s (-> "aoc/day09.txt"
+              io/resource
+              slurp)
+        prog (program-compile s)
+        ]
+    (rest (first (program [prog [2] []])))))
+
+(part2)
+
 
 (comment
 (program [(program-compile "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99") [] []])
