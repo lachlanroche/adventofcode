@@ -5,13 +5,15 @@
             [clojure.math.combinatorics :as combo]))
 
 (defn cpu-peek
-  [mem mode a]
   #_(tap> ["peek" mode a])
+  [mem rb mode a]
   (cond
     (= mode 0)
     (get mem a 0)
     (= mode 1)
     a
+    (= mode 2)
+    (cpu-peek mem 0 0 (+ rb a))
     ))
 
 (defn cpu-poke-assoc
@@ -22,14 +24,16 @@
       (assoc mem a v))))
 
 (defn cpu-poke
-  [mem mode a val]
+  [mem rb mode a val]
   #_(tap> ["poke" mode a val])
   #_(tap> mem)
   (cond
     (= mode 0)
-    (cpu-poke-assoc mem (get mem a) val)
+    (cpu-poke-assoc mem a val)
     (= mode 1)
-    (cpu-poke-assoc mem a val)))
+    (cpu-poke-assoc mem a val)
+    (= mode 2)
+    (cpu-poke mem 0 0 (+ rb a) val)))
 
 (defn cpu-input
   [in]
@@ -40,65 +44,71 @@
   (conj out a))
 
 (defn op-add
-  [[a b z] [ma mb mz] [mem in out ip]]
-  (let [a (cpu-peek mem ma a)
-        b (cpu-peek mem mb b)
+  [[a b z] [ma mb mz] [mem in out ip rb]]
+  (let [a (cpu-peek mem rb ma a)
+        b (cpu-peek mem rb mb b)
         result (+ a b)
-        mem (cpu-poke mem 1 z result)]
-    [mem in out (+ 4 ip)]))
+        mem (cpu-poke mem rb mz z result)]
+    [mem in out (+ 4 ip) rb]))
 
 (defn op-mul
-  [[a b z] [ma mb mz] [mem in out ip]]
-  (let [a (cpu-peek mem ma a)
-        b (cpu-peek mem mb b)
+  [[a b z] [ma mb mz] [mem in out ip rb]]
+  (let [a (cpu-peek mem rb ma a)
+        b (cpu-peek mem rb mb b)
         result (* a b)
-        mem (cpu-poke mem 1 z result)]
-    [mem in out (+ 4 ip)]))
+        mem (cpu-poke mem rb mz z result)]
+    [mem in out (+ 4 ip) rb]))
 
 (defn op-input
-  [[z] [mz] [mem in out ip]]
+  [[z] [mz] [mem in out ip rb]]
   (let [[result in] (cpu-input in)
-        mem (cpu-poke mem 1 z result)]
-    [mem in out (+ 2 ip)]))
+        mem (cpu-poke mem rb mz z result)]
+    [mem in out (+ 2 ip) rb]))
 
 (defn op-output
-  [[z] [mz] [mem in out ip]]
-  (let [result (cpu-peek mem mz z)
+  [[z] [mz] [mem in out ip rb]]
+  (let [result (cpu-peek mem rb mz z)
         out (cpu-output out result)]
-    [mem in out (+ 2 ip)]))
+    [mem in out (+ 2 ip) rb]))
 
 (defn op-jump-if-true
-  [[a b] [ma mb] [mem in out ip]]
-  (let [a (cpu-peek mem ma a)
-        b (cpu-peek mem mb b)]
+  [[a b] [ma mb] [mem in out ip rb]]
+  (let [a (cpu-peek mem rb ma a)
+        b (cpu-peek mem rb mb b)]
     (if (not= 0 a)
-      [mem in out b]
-      [mem in out (+ 3 ip)])))
+      [mem in out b rb]
+      [mem in out (+ 3 ip) rb])))
 
 (defn op-jump-if-false
-  [[a b] [ma mb] [mem in out ip]]
+  [[a b] [ma mb] [mem in out ip rb]]
   #_(tap> ["jif" [a b] [ma mb] ip])
-  (let [a (cpu-peek mem ma a)
-        b (cpu-peek mem mb b)]
+  (let [a (cpu-peek mem rb ma a)
+        b (cpu-peek mem rb mb b)]
     (if (= 0 a)
-      [mem in out b]
-      [mem in out (+ 3 ip)])))
+      [mem in out b rb]
+      [mem in out (+ 3 ip) rb])))
 
 (defn op-less-than
-  [[a b z] [ma mb mz] [mem in out ip]]
-  (let [a (cpu-peek mem ma a)
-        b (cpu-peek mem mb b)
+  [[a b z] [ma mb mz] [mem in out ip rb]]
+  (let [a (cpu-peek mem rb ma a)
+        b (cpu-peek mem rb mb b)
         result (if (< a b) 1 0)
-        mem (cpu-poke mem 1 z result)]
-  [mem in out (+ 4 ip)]))
+        mem (cpu-poke mem rb mz z result)]
+  [mem in out (+ 4 ip) rb]))
 
 (defn op-equals
-  [[a b z] [ma mb mz] [mem in out ip]]
-  (let [a (cpu-peek mem ma a)
-        b (cpu-peek mem mb b)
+  [[a b z] [ma mb mz] [mem in out ip rb]]
+  (let [a (cpu-peek mem rb ma a)
+        b (cpu-peek mem rb mb b)
         result (if (= a b) 1 0)
-        mem (cpu-poke mem 1 z result)]
-  [mem in out (+ 4 ip)]))
+        mem (cpu-poke mem rb mz z result)]
+    [mem in out (+ 4 ip) rb]))
+
+(defn op-rbase
+  [[a] [ma] [mem in out ip rb]]
+  #_(tap> ["rbase" a ma rb ma a])
+  (let [a (cpu-peek mem rb ma a)]
+    [mem in out (+ 2 ip) (+ a rb)]))
 
 (defn op-halt
   [_ _ _]
@@ -113,6 +123,7 @@
    6 {:fn op-jump-if-false :argc 2}
    7 {:fn op-less-than :argc 3}
    8 {:fn op-equals :argc 3}
+   9 {:fn op-rbase :argc 1}
    99 {:fn op-halt :argc 0}
    })
 
@@ -135,24 +146,23 @@
 
 (defn program
   ([mio]
-   (program mio 0))
-  ([[mem in out] offset]
+   (program mio 0 0))
+  ([[mem in out] offset rbase]
    (let [op (cpu-decode (get mem offset))
          op-fn (:fn op)
          op-argc (:argc op)
          op-mode (:mode op)]
      #_(tap> op)
-     #_(tap> offset)
      #_(tap> (vec (take op-argc (drop (+ 1 offset) mem))))
      (cond
        (= op-halt op-fn)
-       [[mem in out] offset]
+       [[mem in out] [offset rbase]]
        (and (= op-input op-fn) (empty? in))
-       [[mem in out] offset]
+       [[mem in out] [offset rbase]]
        :else
-       (let [[mem in out offset] (op-fn (vec (take op-argc (drop (+ 1 offset) mem))) op-mode [mem in out offset])]
+       (let [[mem in out offset rbase] (op-fn (vec (take op-argc (drop (+ 1 offset) mem))) op-mode [mem in out offset rbase])]
          #_(tap> [mem in out])
-         (recur [mem in out] offset))))))
+         (recur [mem in out] offset rbase))))))
 
 (defn program-stopped?
   [mem offset]
