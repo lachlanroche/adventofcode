@@ -9,7 +9,7 @@
   #_(tap> ["peek" mode a])
   (cond
     (= mode 0)
-    (get mem a)
+    (get mem a 0)
     (= mode 1)
     a
     ))
