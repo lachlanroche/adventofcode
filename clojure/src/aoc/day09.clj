@@ -216,12 +216,21 @@
 
 (defn part1
   []
-  (let [s (-> "aoc/day07.txt"
+  (let [s (-> "aoc/day09.txt"
               io/resource
               slurp)
+        prog (program-compile s)
         ]
-    (part1-run s)))
+    (rest (first (program [prog [1] []])))))
 
+(part1)
+
+
+(comment
+(program [(program-compile "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99") [] []])
+(program [(program-compile "1102,34915192,34915192,7,4,7,99,0") [] []])
+(program [(program-compile "104,1125899906842624,99") [] []])
+)
 (comment
 (part1-run "3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0")
 (part1-run "3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0")
