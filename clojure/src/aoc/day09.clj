@@ -223,8 +223,6 @@
         ]
     (rest (first (program [prog [1] []])))))
 
-(part1)
-
 (defn part2
   []
   (let [s (-> "aoc/day09.txt"
@@ -234,10 +232,10 @@
         ]
     (rest (first (program [prog [2] []])))))
 
+(comment
+(part1)
 (part2)
 
-
-(comment
 (program [(program-compile "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99") [] []])
 (program [(program-compile "1102,34915192,34915192,7,4,7,99,0") [] []])
 (program [(program-compile "104,1125899906842624,99") [] []])
