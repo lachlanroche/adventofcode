@@ -1,6 +1,7 @@
 (ns aoc.day09
   (:require [clojure.string :as str]
             [clojure.java.io :as io]
+            [clojure.edn :as edn]
             [clojure.math.combinatorics :as combo]))
 
 (defn cpu-peek
@@ -169,7 +170,7 @@
 (defn program-compile
   [s]
   (let [numbers (str/split s #"[,\n]")
-        mem (vec (map #(Integer/parseInt %) numbers))
+        mem (vec (map #(edn/read-string %) numbers))
         ]
     mem))
 
