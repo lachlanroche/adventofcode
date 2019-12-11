@@ -173,6 +173,12 @@
     #_(tap> (not= op-halt op-fn))
     (= op-halt op-fn)))
 
+(defn program-wait-input?
+  [mem offset]
+  (let [op (cpu-decode (get mem offset))
+        op-fn (:fn op)]
+    (= op-input op-fn)))
+
 (defn program-running?
   [mem offset]
   (not (program-stopped? mem offset)))
