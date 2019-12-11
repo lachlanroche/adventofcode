@@ -29,8 +29,10 @@
   (assoc robot :canvas (assoc canvas position color)))
 
 (defn read-camera
-  [{:keys [position canvas blank]}]
-  (get canvas position blank))
+  [{:keys [position canvas blank blank-origin]}]
+  (if (= position [0 0])
+    (get canvas position blank-origin)
+    (get canvas position blank)))
 
 (defn robot-action-paint
   [robot color]
@@ -53,12 +55,12 @@
     (assoc robot :action action)))
 
 (defn make-robot
-  [base-color]
-  {:position [0 0] :facing :up :canvas {} :blank base-color :action robot-action-paint})
+  [base-color origin-color]
+  {:position [0 0] :facing :up :canvas {} :blank base-color :blank-origin origin-color :action robot-action-paint})
 
 (defn robot-program
-  ([prog]
-   (robot-program (make-robot 0) prog [] [] 0 0))
+  ([prog origin-color]
+   (robot-program (make-robot 0 origin-color) prog [] [] 0 0))
   ([robot mem in out offset rbase]
    (cond
      (not (empty? out))
@@ -112,8 +114,20 @@
               io/resource
               slurp)
         prog (ic/program-compile s)
-        robot (robot-program prog)]
+        robot (robot-program prog 0)]
     (println (robot-print robot))
     (count (:canvas robot))))
 
+(defn part2
+  []
+  (let [s (-> "aoc/day11.txt"
+              io/resource
+              slurp)
+        prog (ic/program-compile s)
+        robot (robot-program prog 1)]
+    (robot-print robot)))
+
+(comment
 (part1)
+(part2)
+)
