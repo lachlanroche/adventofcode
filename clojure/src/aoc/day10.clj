@@ -30,9 +30,28 @@
        (map first)
        set))
 
+(defn polar-adjust
+  [[x y]]
+  (let [[x y] [(- x) y]]
+    (cond
+      (and (> 0 x) (> 0 y))
+      [y (- x)]
+      (and (> 0 x) (< 0 y))
+      [y (- x)]
+      (and (< 0 x) (> 0 y))
+      [y (- x)]
+      :else
+      [y (- x)])))
+
 (defn polar-coord
   [[x y]]
-  {:dist (Math/sqrt (+ (* x x) (* y y))) :angle (Math/atan2 y x)})
+  (let [x (double x)
+        y (double y)
+        [x y] (polar-adjust [x y])
+        dist (Math/sqrt (+ (* x x) (* y y)))
+        angle (Math/acos (/ (* -1 x) dist))
+        angle (if (<= 0 y) angle (+ (* -1 angle) (Math/PI) (Math/PI)))]
+  {:dist dist :angle (float angle)}))
 
 (defn asteroid-visibility
   [{:keys [asteroids] :as field} bpoint]
