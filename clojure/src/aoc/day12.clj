@@ -48,11 +48,10 @@
 (defn physics-step
   [moons]
   (let [result
-  (->> moons
-       (map (partial gravity-step moons))
-       (map velocity-step))]
-    (tap> result)
-    result))
+        (->> moons
+             (map (partial gravity-step moons))
+             (map velocity-step))]
+    (vec result)))
 
 (defn part1-impl
   [n moons]
