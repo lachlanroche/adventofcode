@@ -16,6 +16,8 @@
 (defn arcade-program
   ([prog]
    (arcade-program (make-arcade) prog [] [] 0 0))
+  ([prog coins]
+   (arcade-program (make-arcade) (assoc prog 0 coins) [] [] 0 0))
   ([arcade mem in out offset rbase]
    (cond
      (<= 3 (count out))
@@ -66,4 +68,7 @@
     (println (arcade-print arcade))
     (count (filter #(= 2 %) (vals (:canvas arcade))))))
 
+(comment
 (part1)
+(part2)
+)
