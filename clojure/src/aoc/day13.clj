@@ -7,13 +7,33 @@
 
 (defn make-arcade
   []
-  {:canvas {} :blank 0 :score 0})
+  {:canvas {} :blank 0 :score 0 :ball [-0 0] :paddle [0 0] :started false})
 
 (defn arcade-draw
-  [{:keys [canvas score] :as arcade} [x y c]]
+  [{:keys [canvas ball paddle started] :as arcade} [x y c]]
   (if (and (= y 0) (= x -1))
     (assoc arcade :score c)
-    (assoc arcade :canvas (assoc canvas [x y] c))))
+    (let [canvas (assoc canvas [x y] c)
+          ball (if (= c 4) [x y] ball)
+          paddle (if (= c 3) [x y] paddle)
+          started (if (= c 2) true started)]
+      (assoc arcade :canvas canvas :ball ball :paddle paddle :started started))))
+
+(defn arcade-move-joystick
+  [{:keys [ball paddle]}]
+  (let [[bx _] ball
+        [px _] paddle]
+    (cond
+      (= bx px)
+      0
+      (< bx px)
+      -1
+      :else
+      1)))
+
+(defn arcade-count-blocks
+  [{:keys [canvas]}]
+  (count (filter #(= 2 %) (vals canvas))))
 
 (defn arcade-program
   ([prog]
@@ -26,13 +46,15 @@
      (let [arcade (arcade-draw arcade (vec (take 3 out)))
            out (vec (drop 3 out))]
        (recur arcade mem in out offset rbase))
-     ;(and (ic/program-wait-input? mem offset) (empty? in))
-     ;(let [pixel (read-camera robot)]
-     ;  (recur robot mem [pixel] out offset rbase))
+     (and (ic/program-wait-input? mem offset) (empty? in))
+     (let [stick (arcade-move-joystick arcade)]
+       (recur arcade mem [stick] out offset rbase))
      (ic/program-stopped? mem offset)
      (do
        #_(tap> [in out offset rbase robot mem])
        arcade)
+     (and (:started arcade) (= 0 (arcade-count-blocks arcade)))
+     arcade
      :else
      (let [[mio reg] (ic/program [mem in out] offset rbase)
            [mem in out] mio
@@ -68,7 +90,17 @@
         prog (ic/program-compile s)
         arcade (arcade-program prog)]
     (println (arcade-print arcade))
-    (count (filter #(= 2 %) (vals (:canvas arcade))))))
+    (arcade-count-blocks arcade)))
+
+(defn part2
+  []
+  (let [s (-> "aoc/day13.txt"
+              io/resource
+              slurp)
+        prog (ic/program-compile s)
+        arcade (arcade-program prog 2)]
+    (println (arcade-print arcade))
+    (:score arcade)))
 
 (comment
 (part1)
