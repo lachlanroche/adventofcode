@@ -7,11 +7,13 @@
 
 (defn make-arcade
   []
-  {:canvas {} :blank 0})
+  {:canvas {} :blank 0 :score 0})
 
 (defn arcade-draw
-  [{:keys [canvas] :as arcade} [x y c]]
-  (assoc arcade :canvas (assoc canvas [x y] c)))
+  [{:keys [canvas score] :as arcade} [x y c]]
+  (if (and (= y 0) (= x -1))
+    (assoc arcade :score c)
+    (assoc arcade :canvas (assoc canvas [x y] c))))
 
 (defn arcade-program
   ([prog]
