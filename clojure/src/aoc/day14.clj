@@ -106,7 +106,6 @@
         (let [window (- upper lower)
               middle (+ lower (quot (- upper lower) 2))
               result (ore-to-produce world "FUEL" middle)]
-          (tap> [lower middle upper result])
           (cond
             (> result target)
             (recur lower middle)
