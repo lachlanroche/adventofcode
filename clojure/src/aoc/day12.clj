@@ -21,7 +21,7 @@
   [moon]
   (* (kinetic moon) (potential moon)))
 
-(defn velocity-step-moon
+(defn velocity-step
   [{:keys [position velocity] :as moon}]
   (assoc moon :position (vec (map + position velocity))))
 
