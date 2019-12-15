@@ -97,3 +97,30 @@
       world (make-world prog)]
   (canvas-print (:canvas world)))
 
+(defn manhattan-distance
+  [[x1 y1] [x2 y2]]
+  (+ (Math/abs (- x1 x2)) (Math/abs (- y2 y1))))
+
+(defn part1
+  []
+  (let [s (-> "aoc/day15.txt"
+              io/resource
+              slurp)
+        prog (ic/program-compile s)
+        world (make-world prog)
+        field (->> (:canvas world)
+                   vals
+                   (filter #(not= 0 (:status %)))
+                   (map :coord)
+                   set)
+        target (:target world)
+        h (partial manhattan-distance target)
+        graph (fn [xy]
+                (->> (coord-neighbors xy)
+                     (filter #(not (nil? (field %))))))
+        ]
+    (count (astar/route graph manhattan-distance h [0 0] target))))
+
+(comment
+  (part1)
+  )
