@@ -1,6 +1,7 @@
 (ns aoc.day14
   (:require [clojure.string :as str]
             [clojure.java.io :as io]
+            [clojure.set :as set]
             [aoc.day09 :as ic]
             [astar.core :as astar]))
 
@@ -13,7 +14,7 @@
 
 (defn canvas-print
   [canvas]
-  (let [{:keys [minx miny maxx maxy]} (world-bounds canvas)]
+  (let [{:keys [minx miny maxx maxy]} (canvas-bounds canvas)]
     (loop [x minx y miny s []]
       (let [node (get canvas [x y] {:status 3})
             c (nth ["#" "." "X" " "] (:status node))
@@ -89,6 +90,27 @@
                 ]
             (recur (assoc-in world [:canvas xy] node) (concat (rest searches) more-searches))))))))
 
+(defn flood-field
+  [field start]
+  (let [searches-fn (fn [pxy]
+                      (->> (coord-neighbors pxy)
+                           (filter #(= % (field %)))
+                           set))
+        ]
+    (loop [n 0 seen {start 0} searches (searches-fn start)]
+      (cond
+        (empty? searches)
+        (apply max (vals seen))
+        :else
+        (let [search (first searches)
+              time (inc (apply max (vals (select-keys seen (coord-neighbors search)))))
+              seen (conj seen {search time})
+              more-searches (set/difference (searches-fn search) (set (keys seen)))
+              ]
+          (recur (inc n) seen (concat (rest searches) more-searches)))))))
+
+
+
 #_
 (let [s (-> "aoc/day15.txt"
             io/resource
@@ -121,6 +143,28 @@
         ]
     (count (astar/route graph manhattan-distance h [0 0] target))))
 
+(defn part2
+  []
+  (let [s (-> "aoc/day15.txt"
+              io/resource
+              slurp)
+        prog (ic/program-compile s)
+        world (make-world prog)
+        field (->> (:canvas world)
+                   vals
+                   (filter #(not= 0 (:status %)))
+                   (map :coord)
+                   set)
+        target (:target world)
+        ]
+    (flood-field field target)))
+
 (comment
-  (part1)
-  )
+(part1)
+(part2)
+)
+
+#_
+(let [field #{[1 1] [1 2] [2 1] [2 3] [3 1] [3 2] [3 3]}
+      target [3 2]]
+  (flood-field field target))
