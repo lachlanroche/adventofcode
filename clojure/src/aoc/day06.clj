@@ -1,9 +1,6 @@
 (ns aoc.day06
-  (:require [clojure.string :as string]
+  (:require [clojure.string :as str]
             [clojure.java.io :as io]))
-
-
-
 
 (defn orbit-insert
   "b orbits a"
@@ -22,8 +19,8 @@
 (defn orbit-total-count
   [s]
   (let [m (->> s
-               string/split-lines
-               (map #(string/split % #"\)"))
+               str/split-lines
+               (map #(str/split % #"\)"))
                (reduce #(orbit-insert %1 (first %2) (second %2)) {})
                (into {}))
         ]
