@@ -1,6 +1,7 @@
 (ns aoc.day06
   (:require [clojure.string :as str]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clojure.set :as set]))
 
 (defn orbit-insert
   "b orbits a"
@@ -38,9 +39,6 @@
   [m]
   (reduce + (map #(orbit-count m %) (keys m))))
 
-(orbit-total-count "COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L")
-
-
 (defn part1
   []
   (-> "aoc/day06.txt"
@@ -57,14 +55,14 @@
               orbit-read-string)
         you (set (orbit-path m "YOU"))
         san (set (orbit-path m "SAN"))
-        y (clojure.set/difference you san)
-        s (clojure.set/difference san you)]
-    (+ - 2 (count y) (count s))))
-
+        y (set/difference you san)
+        s (set/difference san you)]
+    (+ -2 (count y) (count s))))
 
 (comment
 (add-orbit {} "COM" "B")
 (orbit-count (add-orbit {} "COM" "B") "B")
 (orbit-count (add-orbit {} "COM" "B") "COM")
 (part1)
+(part2)
 )
