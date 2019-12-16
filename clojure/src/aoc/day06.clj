@@ -16,7 +16,15 @@
     (recur m y (+ 1 result))
     result)))
 
-(defn orbit-total-count
+(defn orbit-path
+  ([m z]
+   (orbit-path m z []))
+  ([m z result]
+   (if-let [y (get m z)]
+    (recur m y (conj result z))
+    result)))
+
+(defn orbit-read-string
   [s]
   (let [m (->> s
                str/split-lines
@@ -24,7 +32,11 @@
                (reduce #(orbit-insert %1 (first %2) (second %2)) {})
                (into {}))
         ]
-    (reduce + (map #(orbit-count m %) (keys m)))))
+    m))
+
+(defn orbit-total-count
+  [m]
+  (reduce + (map #(orbit-count m %) (keys m))))
 
 (orbit-total-count "COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L")
 
@@ -34,6 +46,7 @@
   (-> "aoc/day06.txt"
       io/resource
       slurp
+      orbit-read-string
       orbit-total-count))
 
 
