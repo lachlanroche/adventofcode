@@ -1,4 +1,4 @@
-(ns aoc.day02)
+(ns aoc.day03)
 
 (defn op-right
   [[x y] n]

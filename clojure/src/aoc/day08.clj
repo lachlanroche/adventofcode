@@ -1,4 +1,4 @@
-(ns aoc.day07
+(ns aoc.day08
   (:require [clojure.string :as str]
             [clojure.java.io :as io]
             [clojure.math.combinatorics :as combo]))
