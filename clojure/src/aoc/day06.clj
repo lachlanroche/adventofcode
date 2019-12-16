@@ -49,6 +49,18 @@
       orbit-read-string
       orbit-total-count))
 
+(defn part2
+  []
+  (let [m (-> "aoc/day06.txt"
+              io/resource
+              slurp
+              orbit-read-string)
+        you (set (orbit-path m "YOU"))
+        san (set (orbit-path m "SAN"))
+        y (clojure.set/difference you san)
+        s (clojure.set/difference san you)]
+    (+ - 2 (count y) (count s))))
+
 
 (comment
 (add-orbit {} "COM" "B")
