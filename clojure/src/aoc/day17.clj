@@ -16,7 +16,7 @@
       world
       (let [ch (str (first s))
             robot? (contains? #{"^" "v" "<" ">"} ch)
-            world (if (not robot?) world (assoc world :robot [x y]))
+            world (if (not robot?) world (assoc world :robot [[x y] ch]))
             canvas (:canvas world)
             ]
         (cond
@@ -36,9 +36,8 @@
        (map key)))
 
 (defn sum-alignment-parameters
-  [s]
-  (->> s
-      parse-scaffold-map
+  [world]
+  (->> world
       intersections
       (map #(apply * %))
       (reduce + 0)))
@@ -53,7 +52,9 @@
         [_ _ out] mio
         outs (str/join "" (map char out))
         ]
-    (sum-alignment-parameters outs)))
+    (->> outs
+         parse-scaffold-map
+         sum-alignment-parameters)))
 
 (comment
 (part1)
