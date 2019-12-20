@@ -9,9 +9,25 @@
   [{x 0 y 1}]
   [[x (inc y)] [x (dec y)] [(dec x) y] [(inc x) y]])
 
+(defn coord-neighbors-3d
+  [{x 0 y 1 z 2}]
+  [[x (inc y) z] [x (dec y) z] [(dec x) y z] [(inc x) y z]])
+
 (defn manhattan-distance
   [[x1 y1] [x2 y2]]
   (+ (Math/abs (- x1 x2)) (Math/abs (- y2 y1))))
+
+(defn bounds
+  [canvas]
+  (let [compare (fn [{minx 0 miny 1 maxx 2 maxy 3} {x 0 y 1}]
+                  [(min x minx) (min y miny) (max x maxx) (max y maxy)])
+        initial (vec (flatten (repeat 2 (first canvas))))
+        {minx 0 miny 1 maxx 2 maxy 3} (reduce compare initial canvas)]
+    {:minx minx :miny miny :maxx maxx :maxy maxy}))
+
+(defn outside?
+  [{:keys [minx miny maxx maxy]} {x 0 y 1}]
+  (or (= x minx) (= x maxx) (= y miny) (= y maxy)))
 
 (defn parse-world
   [s]
