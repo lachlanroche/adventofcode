@@ -91,8 +91,59 @@
                    (into {})
                    (make-portalmap world))
         graph-fn (fn [xy]
-                   (->> (conj (coord-neighbors xy) (get-in world [ :adjacent xy] [-10 -10]))
+                   (->> (conj (coord-neighbors xy) (get-in world [:adjacent xy] [-10 -10]))
                         (filter #(not (nil? (canvas %))))))
         ]
     (count (bfs-path canvas graph-fn (:start world) (:dest world)))
     ))
+
+(defn make-world-plane
+  [canvas upwards downwards z]
+  (let [canvas (set (map #(conj % z) canvas))
+        upwards (into {} (map #(hash-map (conj (key %) z) (conj (val %) (dec z))) upwards))
+        downwards  (into {} (map #(hash-map (conj (key %) z) (conj (val %) (inc z))) downwards))
+        ]
+    {:canvas canvas :adjacent (merge upwards downwards)}))
+
+(defn make-recursive-world
+  [{:keys [canvas adjacent start dest] :as world} planes]
+  (let [start (conj start 0)
+        dest (conj dest 0)
+        bounds (bounds canvas)
+        up-down-wards (fn [acc kv]
+                        (let [k (key kv)
+                              v (val kv)]
+                          (if (outside? bounds k)
+                            (assoc-in acc [:upwards k] v)
+                            (assoc-in acc [:downwards k] v))))
+        up-down-wards (reduce up-down-wards {} adjacent)
+        upwards (:upwards up-down-wards)
+        downwards (:downwards up-down-wards)]
+    (->>
+     (range planes)
+     (map (partial make-world-plane canvas upwards downwards))
+     (apply merge-with into)
+     (merge {:start start :dest dest})
+     )))
+
+(defn part2
+  []
+  (let [world (-> "aoc/day20.txt"
+                  io/resource
+                  slurp
+                  parse-world)
+        canvas (:canvas world)
+        world (->> (:portal world)
+                   (map (partial find-portals world))
+                   (into {})
+                   (make-portalmap world))
+        world (make-recursive-world world 100)
+        canvas (:canvas world)
+        graph-fn (fn [xyz]
+                   (->> (conj (coord-neighbors-3d xyz) (get-in world [:adjacent xyz] [-10 -10 -10]))
+                        (filter #(not (nil? (canvas %))))))
+        ]
+    (count (bfs-path canvas graph-fn (:start world) (:dest world)))
+    ))
+#_
+(part2)
