@@ -55,8 +55,6 @@
                       (into {}))]
     {:canvas canvas :start start :dest dest :adjacent adjacent}))
 
-(reduce conj [0] [1 2 3])
-
 (defn bfs-walk
   [canvas neighbors start dest]
   (loop [seen {} queue (conj clojure.lang.PersistentQueue/EMPTY [start nil])]
@@ -73,8 +71,12 @@
   [canvas neighbors start dest]
   (let [parentmap (bfs-walk canvas neighbors start dest)]
     (loop [node dest path (list)]
-      (if (= node start)
+      (cond
+        (nil? node)
+        nil
+        (= node start)
         path
+        :else
         (recur (parentmap node) (conj path node))))))
 
 (defn part1
