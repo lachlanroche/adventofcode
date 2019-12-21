@@ -29,3 +29,8 @@
 (defn part1
   []
   (springdroid-runsc ["NOT A J" "NOT B T" "OR T J" "NOT C T" "OR T J" "AND D J" "WALK"]))
+
+(defn part2
+  []
+  (springdroid-runsc
+   ["NOT A J" "NOT B T" "AND D T" "OR T J" "NOT C T" "OR T J" "NOT A T" "OR T J" "AND H J" "OR E J" "AND D J" "RUN"]))
