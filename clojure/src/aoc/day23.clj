@@ -45,8 +45,12 @@
   (let [prog (load-program)]
     (vec (map #(vector prog [%] [] 0 0 false) (range n)))))
 
+(defn route-nat-1
+  [computers nat b c]
+  [nil nil c])
+
 (defn route-packets
-  [computers]
+  [computers nat route-nat-fn]
   (let [has-packet? #(= 3 (count (nth % 2)))
         rm-packet #(if (has-packet? %) (assoc % 2 []) %)
         packets (->> computers
@@ -59,10 +63,13 @@
                        vec)]
     (loop [packets packets computers computers]
       (if (empty? packets)
-        [computers nil]
+        [computers nat nil]
         (let [[a b c] (first packets)]
           (if (= 255 a)
-            [nil c]
+            (let [[computers nat result] (route-nat-fn computers nat b c)]
+              (if (not (nil? result))
+                [nil nil result]
+                (recur (rest packets) computers)))
             (let [comp (get computers a)
                   in (->
                       (get comp 1 [])
@@ -73,19 +80,20 @@
               (recur (rest packets) computers))))))))
 
 (defn run-loop
-  [computers]
+  [computers nat route-nat-fn result]
   (cond
-    (number? computers)
-    computers
+    (number? result)
+    result
     (every? #(ic/program-stopped? (first %) (nth % 3)) computers)
     nil
     :else
     (let [computers (map #(apply program-step %) computers)
-          [computers result] (route-packets computers)]
+          [computers nat result] (route-packets computers nat route-nat-fn)]
       (if (nil? result)
-        (recur computers)
+        (recur computers nat route-nat-fn result)
         result))))
+
 
 (defn part1
   []
-  (run-loop (make-world 50)))
+  (run-loop (make-world 50) nil route-nat-1 nil))
