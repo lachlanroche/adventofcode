@@ -6,20 +6,32 @@
             [clojure.math.combinatorics :as combo]))
 
 (defn program-step
-  [mem in out offset rbase]
+  [mem in out offset rbase idle?]
   (let [op (ic/cpu-decode (get mem offset))
         op-fn (:fn op)
         op-argc (:argc op)
-        op-mode (:mode op)]
+        op-mode (:mode op)
+        idle? (cond
+                (= ic/op-output op-fn)
+                false
+                (and (= ic/op-output op-fn) (empty? in))
+                true
+                :else
+                idle?)
+        ]
     (cond
       (= ic/op-halt op-fn)
-      [mem in out offset rbase]
+      [mem in out offset rbase idle?]
       (and (= ic/op-input op-fn) (empty? in))
       (let [[mem in out offset rbase] (op-fn (vec (take op-argc (drop (+ 1 offset) mem))) op-mode [mem [-1] out offset rbase])]
-        [mem in out offset rbase])
+        [mem in out offset rbase idle?])
       :else
       (let [[mem in out offset rbase] (op-fn (vec (take op-argc (drop (+ 1 offset) mem))) op-mode [mem in out offset rbase])]
-        [mem in out offset rbase]))))
+        [mem in out offset rbase idle?]))))
+
+(defn network-idle?
+  [computers]
+  (every? #(and (empty? (second %)) (last %)) computers))
 
 (defn load-program
   []
@@ -31,7 +43,7 @@
 (defn make-world
   [n]
   (let [prog (load-program)]
-    (vec (map #(vector prog [%] [] 0 0) (range n)))))
+    (vec (map #(vector prog [%] [] 0 0 false) (range n)))))
 
 (defn route-packets
   [computers]
