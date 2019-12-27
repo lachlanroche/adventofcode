@@ -139,11 +139,7 @@
         size 10007
         shuffles (parse-input s size)
         shuffles (combine-shuffle-list shuffles)
-        deck (loop [deck (range size) shuffles shuffles]
-                (if (empty? shuffles)
-                  deck
-                  (recur (perform deck (first shuffles)) (rest shuffles))))
-        _deck (reduce #(perform %1 %2) (range size) shuffles)]
+        deck (reduce #(perform %1 %2) (range size) shuffles)]
     (.indexOf deck 2019)
     ))
 
