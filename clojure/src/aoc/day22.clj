@@ -102,7 +102,6 @@
 
 (defn perform
   [deck {:keys [type size n]}]
-  (tap> ["perform" type size n])
   (cond
     (= type :deal)
     (reverse deck)
