@@ -44,14 +44,12 @@
   (let [repeated? (= c (get-in nat [:packet 1]))
         idle? (network-idle? computers)
         nat (assoc nat :packet [b c])]
-    #_(tap> ["nat" b c repeated? idle?])
     (cond
       (and idle? repeated?)
       [nil nil c]
       idle?
       (let [comp (get computers 0)
             comp (assoc comp 1 [b c])
-            ;comp (assoc comp 5 false)
             computers (assoc computers 0 comp)]
         [computers nat nil])
       :else
