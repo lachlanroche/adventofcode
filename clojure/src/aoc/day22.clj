@@ -4,6 +4,7 @@
 
 ;; shuffle
 ;; {:type :n :size}
+;; using the approach described by https://www.reddit.com/r/adventofcode/comments/ee56wh/2019_day_22_part_2_so_whats_the_purpose_of_this/
 
 (defn combine-shuffle
   [a b]
