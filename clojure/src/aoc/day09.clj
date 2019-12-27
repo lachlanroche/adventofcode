@@ -147,6 +147,11 @@
 (defn program
   ([mio]
    (program mio 0 0))
+  ([mem in out offset rbase]
+   (let [[mio reg] (program [mem in out] offset rbase)
+         [mem in out] mio
+         [offset rbase] reg]
+     [mem in out offset rbase]))
   ([[mem in out] offset rbase]
    (let [op (cpu-decode (get mem offset))
          op-fn (:fn op)
