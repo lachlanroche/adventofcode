@@ -33,11 +33,33 @@
 (defn make-world
   [n]
   (let [prog (load-program)]
-    (vec (map #(vector prog [%] [] 0 0 false) (range n)))))
+    (vec (map #(vector prog [% -1 -1] [] 0 0 false) (range n)))))
 
 (defn route-nat-1
   [computers nat b c]
   [nil nil c])
+
+(defn route-nat-2
+  [computers nat b c]
+  (let [repeated? (= c (get-in nat [:packet 1]))
+        idle? (network-idle? computers)
+        nat (assoc nat :packet [b c])]
+    #_(tap> ["nat" b c repeated? idle?])
+    (cond
+      (and idle? repeated?)
+      [nil nil c]
+      idle?
+      (let [comp (get computers 0)
+            comp (assoc comp 1 [b c])
+            ;comp (assoc comp 5 false)
+            computers (assoc computers 0 comp)]
+        [computers nat nil])
+      :else
+      [computers nat nil])))
+
+(defn make-nat-2
+  []
+  {:packet nil :restart nil})
 
 (defn read-packets
   [computer]
@@ -92,5 +114,3 @@
 (defn part2
   []
   (run-loop (make-world 50) (make-nat-2) route-nat-2 nil))
-
-(part2)
