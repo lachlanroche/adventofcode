@@ -130,15 +130,31 @@
     )
 )
 
+(defn follow
+  [card {:keys [type size n]}]
+  (cond
+    (= type :deal)
+    (- size card)
+
+    (= type :cut)
+    (rem (+ size (- card n)) size)
+
+    (= type :increment)
+    (rem (* card n) size)
+    ))
+
 (defn part1
   []
   (let [s (->> "aoc/day22.txt"
                io/resource
                slurp)
         size 10007
+        card 2019
         shuffles (parse-input s size)
         shuffles (combine-shuffle-list shuffles)
         deck (reduce #(perform %1 %2) (range size) shuffles)]
-    (.indexOf deck 2019)
+    #_
+    (.indexOf deck card)
+    (reduce #(follow %1 %2) card shuffles)
     ))
 
