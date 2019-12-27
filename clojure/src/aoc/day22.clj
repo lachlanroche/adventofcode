@@ -89,9 +89,9 @@
       (str/starts-with? s "deal into")
       {:type :deal :size size}
       (str/starts-with? s "cut")
-      {:type :cut :size size :n (Long/parseLong (last ss))}
+      {:type :cut :size size :n (bigint (Long/parseLong (last ss)))}
       (str/starts-with? s "deal with")
-      {:type :increment :size size :n (Long/parseLong (last ss))}
+      {:type :increment :size size :n (bigint (Long/parseLong (last ss)))}
       :else
       nil)))
 
