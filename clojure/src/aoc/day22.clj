@@ -158,3 +158,30 @@
     (reduce #(follow %1 %2) card shuffles)
     ))
 
+(defn cycles-shuffles
+  [shuffles len]
+  (loop [len len factor shuffles shuffles '()]
+    (if (zero? len)
+      shuffles
+      (let [shuffles (if (even? len)
+                       shuffles
+                       (combine-shuffle-list (concat shuffles factor)))
+            factor (combine-shuffle-list (concat factor factor))]
+        (recur (quot len 2N) factor shuffles )))))
+
+
+(defn part2
+  []
+  (let [s (->> "aoc/day22.txt"
+               io/resource
+               slurp)
+        size 119315717514047N
+        times 101741582076661N
+        card 2020
+        times-until-sorted (- size times 1)
+        shuffles (parse-input s size)
+        shuffles (combine-shuffle-list shuffles)
+        shuffles (cycles-shuffles shuffles times-until-sorted)
+        ]
+    (reduce #(follow %1 %2) card shuffles)
+    ))
