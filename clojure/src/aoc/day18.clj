@@ -78,11 +78,23 @@
   (def blockmap blockmap)
   (def distmap distmap)
   nil
-)
+  )
 
+; {:key "a" :dist 0 :seen
+(defn walkpath
+  [{:keys [keyset blockmap distmap]}]
+  nil);(loop [key "@" dist 0 seen #{} queue (sorted-set-by ]
+
+
+;; distmap {#{"a" "b"} 560} ; distances between pairs
+;; keyset #{"a"} ; all keys
+;; blockmap {#{"a" "b"} #{"C" "D"}} ; what doors block each path
+[distmap]
+[keyset]
+[blockmap]
 
 ;; start from "@" candidates have no blockages
-(filter #(and (contains? (key %) "@") (empty? (val %))) blockmap)
-
+(apply set/union (map key (filter #(and (contains? (key %) "@") (empty? (val %))) blockmap))
+)
 ;; remove useless "@" transitions
 (filter #(not (and (contains? (key %) "@") (not (empty? (val %))))) blockmap)
