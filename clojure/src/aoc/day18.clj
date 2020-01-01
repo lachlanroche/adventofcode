@@ -63,38 +63,53 @@
         ]
     {:distmap (into {} (map #(hash-map (key %) (first (val %))) pairmap)) :blockmap (into {} (map #(hash-map (key %) (second (val %))) pairmap))}))
 
+(defn path-distance
+  [path distmap]
+  (loop [distance 0 path path]
+    (if (> 2 (count path))
+      distance
+      (let [a (first path)
+            b (second path)
+            d (distmap #{a b})]
+        (recur (+ d distance) (rest path))))))
 
-(let [s (->> "aoc/day18.txt"
-             io/resource
-             slurp)
-      world (parse-world s)
-      doormap (make-doormap world)
-      waypoints (merge {} (:key world) (:robot world))
-      {:keys [distmap blockmap]} (make-pathmaps world doormap waypoints)
-      blockmap (filter #(not (and (contains? (key %) "@") (not (empty? (val %))))) blockmap)
-      keyset (set (keys (:key world)))
+(defn blocked?
+  [this next seen blockmap]
+  (loop [doors (get blockmap #{this next})]
+    (let [door (first doors)]
+      (cond
+        (empty? doors)
+        false
+        (not (seen (str/lower-case door)))
+        true
+        :else
+        (recur (disj doors door))))))
+
+(defn find-paths
+  [this path seen notseen blockmap]
+  (if (empty? notseen)
+    (list (conj path this))
+    (loop [paths nil nodes notseen]
+      (let [node (first nodes)]
+        (cond
+          (empty? nodes)
+          paths
+          (blocked? this node seen blockmap)
+          (recur paths (disj nodes node))
+          :else
+          (let [p (find-paths node (conj path this) (conj seen node) (disj notseen node) blockmap)
+                paths (concat paths p)]
+            (recur paths (disj nodes node))))))))
+
+(defn part1
+  []
+  (let [s (->> "aoc/day18.txt"
+               io/resource
+               slurp)
+        world (parse-world s)
+        doormap (make-doormap world)
+        waypoints (merge {} (:key world) (:robot world))
+        {:keys [distmap blockmap]} (make-pathmaps world doormap waypoints)
+        blockmap (filter #(not (and (contains? (key %) "@") (not (empty? (val %))))) blockmap)
       ]
-  (def keyset keyset)
-  (def blockmap blockmap)
-  (def distmap distmap)
-  nil
-  )
-
-; {:key "a" :dist 0 :seen
-(defn walkpath
-  [{:keys [keyset blockmap distmap]}]
-  nil);(loop [key "@" dist 0 seen #{} queue (sorted-set-by ]
-
-
-;; distmap {#{"a" "b"} 560} ; distances between pairs
-;; keyset #{"a"} ; all keys
-;; blockmap {#{"a" "b"} #{"C" "D"}} ; what doors block each path
-[distmap]
-[keyset]
-[blockmap]
-
-;; start from "@" candidates have no blockages
-(apply set/union (map key (filter #(and (contains? (key %) "@") (empty? (val %))) blockmap))
-)
-;; remove useless "@" transitions
-(filter #(not (and (contains? (key %) "@") (not (empty? (val %))))) blockmap)
+    (find-paths "@" [] #{"@"} (disj (apply set/union (keys blockmap)) "@") blockmap)))
