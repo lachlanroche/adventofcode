@@ -134,3 +134,17 @@ public func part1() -> UInt16 {
     
     return circuit.evaluate(wire: "a")
 }
+
+public func part2() -> UInt16 {
+    var circuit = Circuit()
+    
+    for s in inputstring().components(separatedBy: "\n") {
+        guard let instr = parse(line: s) else { continue }
+        circuit.add(instruction: instr)
+    }
+    
+    let part1 = circuit.evaluate(wire: "a")
+    circuit.add(instruction: .load(target: "b", left: String(part1)))
+
+    return circuit.evaluate(wire: "a")
+}
