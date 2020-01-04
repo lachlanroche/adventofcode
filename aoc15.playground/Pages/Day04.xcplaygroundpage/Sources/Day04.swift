@@ -19,9 +19,10 @@ public extension String {
     }
 }
 
-public func zeroSuffix( of str: String) -> Int {
+public func zeroPrefix( of str: String, size: Int = 5) -> Int {
+    let prefix = String(repeating: "0", count: size)
     for i in 1... {
-        if str.appending(String(i)).md5Hash().hasPrefix("00000") {
+        if str.appending(String(i)).md5Hash().hasPrefix(prefix) {
             return i
         }
     }

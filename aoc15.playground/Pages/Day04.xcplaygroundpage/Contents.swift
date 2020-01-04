@@ -3,7 +3,8 @@
 import Foundation
 import Day04_PageSources
 
-zeroSuffix(of: "iwrupvqb")
+zeroPrefix(of: "iwrupvqb")
+zeroPrefix(of: "iwrupvqb", size: 6)
 
 
 //: [Next](@next)
