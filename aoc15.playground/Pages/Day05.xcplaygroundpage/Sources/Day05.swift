@@ -54,7 +54,7 @@ extension String {
 }
 
 public extension String {
-    func isNice() -> Bool {
+    func isNice1() -> Bool {
         return hasThreeVowels() && hasRepeats() && !hasStopWords()
     }
 }
@@ -64,7 +64,7 @@ public func part1() -> Int {
         .components(separatedBy: "\n")
         .filter { !$0.isEmpty }
         .reduce(0) { (acc, str) in
-            if str.isNice() {
+            if str.isNice1() {
                 return acc + 1
             } else {
                 return acc
