@@ -38,6 +38,27 @@ public extension String {
         
         return length
     }
+    
+    func santaEncode() -> String {
+        var chars =  [Character]()
+        chars.append("\"")
+        
+        for ch in self {
+            switch ch {
+            case "\"", "\\":
+                chars.append("\\")
+                chars.append(ch)
+                break
+
+            default:
+                chars.append(ch)
+                break
+            }
+        }
+        
+        chars.append("\"")
+        return String(chars)
+    }
 }
 
 public func part1() -> Int {
@@ -47,5 +68,16 @@ public func part1() -> Int {
             (acc, line) in
             let input = line.santaInput()
             return acc + input.count - input.santaContentLength()
+        }
+}
+
+public func part2() -> Int {
+    return inputstring()
+        .components(separatedBy: "\n")
+        .reduce(0) {
+            (acc, line) in
+            let input = line.santaInput()
+            let p1 = input.count - input.santaContentLength()
+            return acc + input.santaEncode().count - p1
         }
 }
