@@ -51,11 +51,22 @@ extension String {
         
         return false
     }
+    
+    func hasRepeatedPair() -> Bool {
+        return nil != range(of: #"(..).*\1"#, options: .regularExpression)
+    }
+    
+    func hasDelayRepeats() -> Bool {
+        return nil != range(of: #"(.).\1"#, options: .regularExpression)
+    }
 }
 
 public extension String {
     func isNice1() -> Bool {
         return hasThreeVowels() && hasRepeats() && !hasStopWords()
+    }
+    func isNice2() -> Bool {
+        return hasDelayRepeats() && hasRepeatedPair()
     }
 }
 
@@ -65,6 +76,19 @@ public func part1() -> Int {
         .filter { !$0.isEmpty }
         .reduce(0) { (acc, str) in
             if str.isNice1() {
+                return acc + 1
+            } else {
+                return acc
+            }
+        }
+}
+
+public func part2() -> Int {
+    return inputstring()
+        .components(separatedBy: "\n")
+        .filter { !$0.isEmpty }
+        .reduce(0) { (acc, str) in
+            if str.isNice2() {
                 return acc + 1
             } else {
                 return acc
