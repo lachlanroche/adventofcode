@@ -89,3 +89,81 @@ public func part1() -> Int {
     
     return world.onCount
 }
+
+struct BrightWorld {
+    var lights: [Int]
+    var width: Int
+    var height: Int
+    
+    init(width: Int, height: Int) {
+        self.height = height
+        self.width = width
+        lights = Array<Int>(repeating: 0, count: width * height)
+    }
+}
+
+extension BrightWorld {
+    subscript(x: Int, y: Int) -> Int {
+        get {
+            return lights[y * width + x]
+        }
+        set {
+            lights[y * width + x] = newValue
+        }
+    }
+    
+    mutating func adjust(x1: Int, y1: Int, x2: Int, y2: Int, action: ((Int) -> Int)) {
+        for x in x1...x2 {
+            for y in y1...y2 {
+                self[x,y] = action(self[x,y])
+            }
+        }
+    }
+    
+    mutating func turnOn(x1: Int, y1: Int, x2: Int, y2: Int) {
+        adjust(x1: x1, y1: y1, x2: x2, y2: y2) { px in
+            return 1 + px
+        }
+    }
+    
+    mutating func turnOff(x1: Int, y1: Int, x2: Int, y2: Int) {
+        adjust(x1: x1, y1: y1, x2: x2, y2: y2) { px in
+            return max(0, px - 1)
+        }
+    }
+    
+    mutating func toggle(x1: Int, y1: Int, x2: Int, y2: Int) {
+        adjust(x1: x1, y1: y1, x2: x2, y2: y2) { px in
+            return px + 2
+        }
+    }
+    
+    var brightness: Int {
+        return lights.reduce(0) {
+            (acc, light) in
+            return acc + light
+        }
+    }
+}
+
+public func part2() -> Int {
+    var world = BrightWorld(width: 1000, height: 1000)
+    
+    for s in inputstring().components(separatedBy: "\n") {
+        let xys: [Int] = s.components(separatedBy: CharacterSet.decimalDigits.inverted)
+            .filter { !$0.isEmpty }
+            .flatMap(Int.init)
+        
+        if s.hasPrefix("turn off") {
+            world.turnOff(x1: xys[0], y1: xys[1], x2: xys[2], y2: xys[3])
+            
+        } else if s.hasPrefix("turn on") {
+            world.turnOn(x1: xys[0], y1: xys[1], x2: xys[2], y2: xys[3])
+                
+        } else if s.hasPrefix("toggle") {
+            world.toggle(x1: xys[0], y1: xys[1], x2: xys[2], y2: xys[3])
+        }
+    }
+    
+    return world.brightness
+}
