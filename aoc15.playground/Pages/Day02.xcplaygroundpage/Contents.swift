@@ -49,4 +49,26 @@ func part1() -> Int
 Size(sides: [2, 3, 4]).papersize
 Size(sides: [1, 1, 10]).papersize
 part1()
+
+extension Size {
+    var ribbonsize: Int {
+        get {
+            let sides = [width, height, length].sorted()
+            
+            return 2 * sides[0] + 2 * sides[1] + width * height * length
+        }
+    }
+}
+
+func part2() -> Int
+{
+    return inputdata().reduce(0) { (acc,size) in
+        return acc + size.ribbonsize
+    }
+}
+
+Size(sides: [2, 3, 4]).ribbonsize
+Size(sides: [1, 1, 10]).ribbonsize
+part2()
+
 //: [Next](@next)
