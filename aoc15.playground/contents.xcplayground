@@ -2,5 +2,6 @@
 <playground version='6.0' target-platform='ios'>
     <pages>
         <page name='Day01'/>
+        <page name='Day02'/>
     </pages>
 </playground>
