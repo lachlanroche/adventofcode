@@ -44,20 +44,28 @@ public extension String {
         chars.append("\"")
         
         for ch in self {
-            switch ch {
-            case "\"", "\\":
+            if ch == "\"" || ch == "\\" {
                 chars.append("\\")
-                chars.append(ch)
-                break
-
-            default:
-                chars.append(ch)
-                break
             }
+            chars.append(ch)
         }
         
         chars.append("\"")
         return String(chars)
+    }
+    
+    func santaEncodeLength() -> Int {
+        var length = 2
+        
+        for ch in self {
+            if ch == "\"" || ch == "\\" {
+                length = 2 + length
+            } else {
+                length = 1 + length
+            }
+        }
+        
+        return length
     }
 }
 
@@ -71,13 +79,13 @@ public func part1() -> Int {
         }
 }
 
+// TODO still got some error in here
 public func part2() -> Int {
     return inputstring()
         .components(separatedBy: "\n")
         .reduce(0) {
             (acc, line) in
             let input = line.santaInput()
-            let p1 = input.count - input.santaContentLength()
-            return acc + input.santaEncode().count - p1
+            return acc + input.santaEncodeLength() - input.count
         }
 }
