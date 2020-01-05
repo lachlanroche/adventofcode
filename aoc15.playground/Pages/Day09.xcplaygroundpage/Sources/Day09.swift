@@ -1,6 +1,6 @@
 import Foundation
 
-public func inputstring() -> String {
+func inputstring() -> String {
     let url = Bundle.main.url(forResource: "input09", withExtension: "txt")
     let data = try? Data(contentsOf: url!)
     return String(data: data!, encoding: .utf8)!
@@ -18,14 +18,12 @@ func inputData() -> Graph {
     return graph
 }
 
-public
 struct Graph {
     var edges: Dictionary<Set<String>,Int> = [:]
 }
 
 typealias Edge = (key: Set<String>, value: Int)
 
-public
 extension Graph {
     
     var nodes: [String] {
@@ -81,12 +79,18 @@ extension Graph {
         }
     }
     
+    func longestPathAndDistance() -> PathAndDistance {
+        return allPaths().reduce(allPaths().first!) {
+            (result, path) in
+            return (path.cost > result.cost) ? path : result
+        }
+    }
+    
     func allPaths() -> [PathAndDistance] {
         return permutations(of: Set(nodes)).map { ($0, pathDistance(path: $0)) }
     }
 }
 
-public
 func permutations(of nodes: Set<String>) -> [[String]] {
     if nodes.isEmpty {
         return []
@@ -106,5 +110,10 @@ func permutations(of nodes: Set<String>) -> [[String]] {
 
 public func part1() -> Int {
     let path = inputData().shortestPathAndDistance()
+    return path.cost
+}
+
+public func part2() -> Int {
+    let path = inputData().longestPathAndDistance()
     return path.cost
 }
