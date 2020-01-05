@@ -2,7 +2,6 @@ import Foundation
 
 let letters: [Character] = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
-public
 extension Character {
     func letterIndex() -> Int {
         return Int(self.asciiValue!) - 97
@@ -12,7 +11,6 @@ extension Character {
     }
 }
 
-public
 extension Array where Element == Character {
     mutating func increment() {
         var index = count - 1
@@ -87,3 +85,14 @@ public func part1() -> String {
     
     return String(password)
 }
+
+public func part2() -> String {
+    var password = Array(part1())
+    
+    repeat {
+        password.increment()
+    } while !password.isValid1()
+    
+    return String(password)
+}
+
