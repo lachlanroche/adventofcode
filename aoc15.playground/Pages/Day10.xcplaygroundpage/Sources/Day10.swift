@@ -1,6 +1,6 @@
 import Foundation
 
-public func lookAndSay(input: String) -> String {
+func lookAndSay(input: String) -> String {
     func say(result: inout [Character], char: Character, count: Int) {
         result.append(contentsOf: String(count))
         result.append(char)
@@ -28,6 +28,14 @@ public func lookAndSay(input: String) -> String {
 public func part1() -> Int {
     var s = "1113222113"
     for _ in 1...40 {
+        s = lookAndSay(input: s)
+    }
+    return s.count
+}
+
+public func part2() -> Int {
+    var s = "1113222113"
+    for _ in 1...50 {
         s = lookAndSay(input: s)
     }
     return s.count
