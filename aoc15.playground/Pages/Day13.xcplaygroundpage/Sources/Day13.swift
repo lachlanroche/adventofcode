@@ -83,3 +83,29 @@ public func part1() -> Int
     return best
 }
 
+
+public func part2() -> Int
+{
+    var rules = inputData()
+    var people = Set(rules.map(\.person))
+    let me = "me"
+    for p in people {
+        rules.append(Rule(person: me, otherPerson: p, happiness: 0))
+        rules.append(Rule(person: p, otherPerson: me, happiness: 0))
+    }
+    people.insert("me")
+
+    let seatings = Combinatorics.permutationsWithoutRepetitionFrom(Array(people), taking: people.count)
+    var best = totalHappiness(seating: happiness(for:seatings[0], with: rules))
+    var bestSeating = seatings[0]
+
+    for seating in seatings {
+        let h = totalHappiness(seating: happiness(for:seating, with: rules))
+        if h > best {
+            best = h
+            bestSeating = seating
+        }
+    }
+
+    return best
+}
