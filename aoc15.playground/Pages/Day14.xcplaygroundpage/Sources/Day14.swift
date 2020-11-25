@@ -52,3 +52,41 @@ public func part1() -> Int
     
     return best
 }
+
+public func part2() -> Int
+{
+    let herd = inputData()
+    var points = Dictionary(uniqueKeysWithValues: herd.map{ ($0.name, 0) })
+    
+    var t = 1
+    while t <= 2503 {
+    
+        let distances = Dictionary(uniqueKeysWithValues: herd.map{ ($0.name, $0.sprint(for: t)) })
+        
+        var dist = 0
+        var winners: Set<String> = []
+        for (name, distance) in distances {
+            if distance == dist {
+                winners.insert(name)
+            } else if distance > dist {
+                winners = [name]
+                dist = distance
+            }
+        }
+        
+        for winner in winners {
+            points[winner]! += 1
+        }
+    
+        t += 1
+    }
+
+    var best = 0
+    for (_, p) in points {
+        if p > best {
+            best = p
+        }
+    }
+    
+    return best
+}
