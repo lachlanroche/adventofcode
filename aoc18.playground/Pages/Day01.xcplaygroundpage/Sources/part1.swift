@@ -36,7 +36,7 @@ class Day01Part01: XCTestCase
 }
 
 //Day01Part01.defaultTestSuite.run()
-
-func day01pt1() -> Int {
-    return frequencyDrift(numbersFromFile(named: "day01part01"))
+public
+func part1() -> Int {
+    return frequencyDrift(numbersFromFile(named: "input"))
 }

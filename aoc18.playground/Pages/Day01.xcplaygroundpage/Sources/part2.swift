@@ -52,7 +52,8 @@ class Day01Part02: XCTestCase
 
 //Day01Part02.defaultTestSuite.run()
 
-func day01pt2() -> Int {
-    return firstRepeatedFrequency(numbersFromFile(named: "day01part01"))
+public
+func part2() -> Int {
+    return firstRepeatedFrequency(numbersFromFile(named: "input"))
 }
 
