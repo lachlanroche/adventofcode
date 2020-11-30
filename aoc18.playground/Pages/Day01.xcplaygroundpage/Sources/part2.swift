@@ -26,7 +26,7 @@ import XCTest
 func firstRepeatedFrequency(_ changes: [Int]) -> Int {
     var freq = 0
     var visited: Set<Int> = [0]
-    for var i in 0...1_000_000_000 {
+    for i in 0...1_000_000_000 {
         let change = changes[i%changes.count]
         freq = freq + change
         if visited.contains(freq) {
