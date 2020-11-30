@@ -97,6 +97,40 @@ extension Sue {
         }
         return true
     }
+    
+    func matches2(with sue: Sue) -> Bool {
+        if let children = children {
+            guard children == sue.children else { return false }
+        }
+        if let cats = cats, let p_cats = sue.cats {
+            guard cats > p_cats else { return false }
+        }
+        if let samoyeds = samoyeds {
+            guard samoyeds == sue.samoyeds else { return false }
+        }
+        if let pomeranians = pomeranians, let p_pomeranians = sue.pomeranians {
+            guard pomeranians < p_pomeranians else { return false }
+        }
+        if let akitas = akitas {
+            guard akitas == sue.akitas else { return false }
+        }
+        if let vizslas = vizslas {
+            guard vizslas == sue.vizslas else { return false }
+        }
+        if let goldfish = goldfish, let p_goldfish = sue.goldfish {
+            guard goldfish < p_goldfish else { return false }
+        }
+        if let trees = trees, let p_trees = sue.trees {
+            guard trees > p_trees else { return false }
+        }
+        if let cars = cars {
+            guard cars == sue.cars else { return false }
+        }
+        if let perfumes = perfumes {
+            guard perfumes == sue.perfumes else { return false }
+        }
+        return true
+    }
 }
 
 public
@@ -105,6 +139,16 @@ func part1() -> Int {
     let sues = inputData()
     
     return sues.filter { $0.matches(with: present) }
+        .map {$0.id}
+        .first!
+}
+
+public
+func part2() -> Int {
+    let present = Sue(id: -1, children: 3, cats: 7, samoyeds: 2, pomeranians: 3, akitas: 0, vizslas: 0, goldfish: 5, trees: 3, cars: 2, perfumes: 1)
+    let sues = inputData()
+    
+    return sues.filter { $0.matches2(with: present) }
         .map {$0.id}
         .first!
 }
