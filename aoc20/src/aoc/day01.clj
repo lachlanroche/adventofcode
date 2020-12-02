@@ -12,14 +12,18 @@
 (defn part1
   []
   (let [nums (input-data)]
-    (for [i nums j nums :when (= 2020 (+ i j))]
-      (* i j))))
+    (first
+     (for [i nums j nums :when (= 2020 (+ i j))]
+       (* i j)))))
 
 (defn part2
   []
   (let [nums (input-data)]
-    (for [i nums j nums k nums :when (= 2020 (+ i j k))]
-      (* i j k))))
+    (first
+     (for [i nums j nums k nums :when (= 2020 (+ i j k))]
+       (* i j k)))))
 
-(part1)
-(part2)
+(comment
+  (part1)
+  (part2)
+)
