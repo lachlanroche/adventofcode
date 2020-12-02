@@ -24,26 +24,27 @@ struct Map {
     }
 }
 
-func walk(to target: Int) -> (Int, Int) {
-    var map = Map()
-    while true {
-        map.right()
-        guard map.distance < target else { map.x -= map.distance - target; break }
-        map.up()
-        guard map.distance < target else { map.y -= map.distance - target; break }
-        map.step += 1
-        map.left()
-        guard map.distance < target else { map.x += map.distance - target; break }
-        map.down()
-        guard map.distance < target else { map.y += map.distance - target; break }
-        map.step += 1
+extension Map {
+    mutating func walk(to target: Int) {
+        while true {
+            right()
+            guard distance < target else { x -= distance - target; break }
+            up()
+            guard distance < target else { y -= distance - target; break }
+            step += 1
+            left()
+            guard distance < target else { x += distance - target; break }
+            down()
+            guard distance < target else { y += distance - target; break }
+            step += 1
+        }
     }
-    return (map.x, map.y)
 }
 
 public func part1() -> Int {
-    let xy = walk(to: 277678)
-    return abs(xy.0) + abs(xy.1)
+    var map = Map()
+    map.walk(to: 277678)
+    return abs(map.x) + abs(map.y)
 }
 
 //: [Next](@next)
