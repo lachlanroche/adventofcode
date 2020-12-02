@@ -1,0 +1,5 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.1"}
+        org.clojure/math.combinatorics {:mvn/version "0.1.6"}
+        astar-search/astar-search {:mvn/version "0.1.1"}
+ }}
