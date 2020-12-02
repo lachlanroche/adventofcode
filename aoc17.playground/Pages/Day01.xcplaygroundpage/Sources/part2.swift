@@ -13,7 +13,7 @@ For example:
 What is the solution to your new captcha?
 */
 
-func actpac(_ str: String) -> Int
+func actpac2(_ str: String) -> Int
 {
     let str2 = str.dropFirst(str.count/2)+str
     return zip(str, str2).reduce(0) {
@@ -24,9 +24,15 @@ func actpac(_ str: String) -> Int
     }
 }
 
+public func part2() -> Int {
+    let s = firstLineFromFile(named: "input")
+    return actpac2(s)
+}
 
-6 == actpac("1212")
-0 == actpac("1221")
-4 == actpac("123425")
-12 == actpac("123123")
-4 == actpac("12131415")
+/*
+6 == actpac2("1212")
+0 == actpac2("1221")
+4 == actpac2("123425")
+12 == actpac2("123123")
+4 == actpac2("12131415")
+*/

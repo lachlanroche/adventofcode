@@ -2,6 +2,7 @@
 
 import Foundation
 
-var str = "Hello, playground"
+part1()
+part2()
 
 //: [Next](@next)

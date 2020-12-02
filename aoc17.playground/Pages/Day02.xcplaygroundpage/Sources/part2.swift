@@ -18,7 +18,7 @@ In this example, the sum of the results would be 4 + 3 + 2 = 9.
 What is the sum of each row's result in your puzzle input?
 */
 
-func checkrow(_ row: [Int]) -> Int
+func checkrow2(_ row: [Int]) -> Int
 {
     let sorted = row.sorted()
     for big in sorted.reversed() {
@@ -33,15 +33,21 @@ func checkrow(_ row: [Int]) -> Int
     return 0
 }
 
-func checksum(_ rows: [[Int]]) -> Int
+func checksum2(_ rows: [[Int]]) -> Int
 {
-    return rows.map(checkrow).reduce(0) {
+    return rows.map(checkrow2).reduce(0) {
         (acc, sum) in
         return acc + sum
     }
 }
 
-4 == checkrow([5, 9, 2, 8])
-3 == checkrow([9, 4, 7, 3])
-2 == checkrow([3, 8, 6, 5])
-9 == checksum([[5, 9, 2, 8], [9, 4, 7, 3], [3, 8, 6, 5]])
+public func part2() -> Int {
+    return checksum2(inputData())
+}
+
+/*
+4 == checkrow2([5, 9, 2, 8])
+3 == checkrow2([9, 4, 7, 3])
+2 == checkrow2([3, 8, 6, 5])
+9 == checksum2([[5, 9, 2, 8], [9, 4, 7, 3], [3, 8, 6, 5]])
+*/

@@ -16,7 +16,13 @@ In this example, the spreadsheet's checksum would be 8 + 4 + 6 = 18.
 What is the checksum for the spreadsheet in your puzzle input?
 */
 
-func checkrow(_ row: [Int]) -> Int
+func inputData() -> [[Int]] {
+    return stringsFromFile(named: "input")
+        .map{ $0.split(separator: " ").map{ Int($0)! }}
+        .filter{ $0.count > 0}
+}
+
+func checkrow1(_ row: [Int]) -> Int
 {
     let minmax = row.reduce((Int.max,Int.min)) {
             (acc,i) in
@@ -25,16 +31,21 @@ func checkrow(_ row: [Int]) -> Int
     return minmax.1 - minmax.0
 }
 
-func checksum(_ rows: [[Int]]) -> Int
+func checksum1(_ rows: [[Int]]) -> Int
 {
-    return rows.map(checkrow).reduce(0) {
+    return rows.map(checkrow1).reduce(0) {
         (acc, sum) in
         return acc + sum
     }
 }
 
-checkrow([5, 1, 9, 5])
-8 == checkrow([5, 1, 9, 5])
-4 == checkrow([7, 5, 3])
-6 == checkrow([2, 4, 6, 8])
-18 == checksum([[5, 1, 9, 5], [7, 5, 3], [2, 4, 6, 8]])
+public func part1() -> Int {
+    return checksum1(inputData())
+}
+/*
+checkrow1([5, 1, 9, 5])
+8 == checkrow1([5, 1, 9, 5])
+4 == checkrow1([7, 5, 3])
+6 == checkrow1([2, 4, 6, 8])
+18 == checksum1([[5, 1, 9, 5], [7, 5, 3], [2, 4, 6, 8]])
+*/

@@ -11,7 +11,7 @@ For example:
 What is the solution to your captcha?
 */
 
-func actpac(_ str: String) -> Int
+func actpac1(_ str: String) -> Int
 {
     return zip(str, str.dropFirst()+str).reduce(0) {
         (acc, ss) in
@@ -21,8 +21,13 @@ func actpac(_ str: String) -> Int
     }
 }
 
-
-3 == actpac("1122")
-4 == actpac("1111")
-0 == actpac("1234")
-9 == actpac("91212129")
+public func part1() -> Int {
+    let s = firstLineFromFile(named: "input")
+    return actpac1(s)
+}
+/*
+3 == actpac1("1122")
+4 == actpac1("1111")
+0 == actpac1("1234")
+9 == actpac1("91212129")
+*/
