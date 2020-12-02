@@ -16,10 +16,23 @@
   (let [n (count (filter #(= letter %) word))]
     (and (>= n min) (<= n max))))
 
+(defn match-p2?
+  [{:keys [min max letter word]}]
+  (let [a? (= letter (get word (dec min)))
+        b? (= letter (get word (dec max)))]
+    (and
+     (or a? b?)
+     (not (and a? b?)))))
+
 (defn part1
   []
   (count (filter match-p1? (input-data))))
 
+(defn part2
+  []
+  (count (filter match-p2? (input-data))))
+
 (comment
   (part1)
+  (part2)
 )
