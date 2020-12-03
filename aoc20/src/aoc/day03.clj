@@ -31,7 +31,6 @@
     (loop [x 0 y 0 t 0]
       (let [x_ (mod (+ dx x) (inc max-x))
             y_ (+ dy y)]
-        (tap> [[x y] (tree? canvas [x y])])
         (cond
           (> y max-y)
           t
