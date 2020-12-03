@@ -44,6 +44,15 @@
   []
   (ski 3 1))
 
+(defn part2
+  []
+  (* (ski 1 1)
+     (ski 3 1)
+     (ski 5 1)
+     (ski 7 1)
+     (ski 1 2)))
+
 (comment
   (part1)
+  (part2)
 )
