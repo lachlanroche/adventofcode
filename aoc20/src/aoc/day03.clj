@@ -24,13 +24,13 @@
   [canvas [x y]]
   (not (nil? (get canvas [x y]))))
 
-(defn part1
-  []
+(defn ski
+  [dx dy]
   (let [{:keys [canvas size]} (input-data)
         [max-x max-y] size]
     (loop [x 0 y 0 t 0]
-      (let [x_ (mod (+ 3 x) (inc max-x))
-            y_ (+ 1 y)]
+      (let [x_ (mod (+ dx x) (inc max-x))
+            y_ (+ dy y)]
         (tap> [[x y] (tree? canvas [x y])])
         (cond
           (> y max-y)
@@ -39,6 +39,10 @@
           (recur x_ y_ (inc t))
           :true
           (recur x_ y_ t))))))
+
+(defn part1
+  []
+  (ski 3 1))
 
 (comment
   (part1)
