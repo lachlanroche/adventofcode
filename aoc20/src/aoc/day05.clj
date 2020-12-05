@@ -39,6 +39,19 @@
        (map seat-id)
        (reduce max)))
 
+(defn part2
+  []
+  (let [seats (->> (input-data)
+                   (map find-seat)
+                   (map seat-id)
+                   set)
+        from (reduce min seats)
+        to (reduce max seats)
+        available (set (range from (inc to) 1))
+        ]
+    (first (clojure.set/difference available seats))))
+
 (comment
   (part1)
+  (part2)
 )
