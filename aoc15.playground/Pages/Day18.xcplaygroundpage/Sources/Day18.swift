@@ -67,3 +67,40 @@ public func part1() -> Int {
     }
     return world.count
 }
+
+public func part2() -> Int {
+    var world = worldFromFile(named: "input")
+    world.insert(Coordinate2D(x: 0, y: 0))
+    world.insert(Coordinate2D(x: 99, y: 0))
+    world.insert(Coordinate2D(x: 0, y: 99))
+    world.insert(Coordinate2D(x: 99, y: 99))
+
+    for _ in 0..<100 {
+        var next = Set<Coordinate2D>()
+
+        for x in 0..<100 {
+            for y in 0..<100 {
+                let point = Coordinate2D(x: x, y: y)
+                let friends = point.neighbors().intersection(world)
+                
+                if world.contains(point) {
+                    if friends.count == 2 || friends.count == 3 {
+                        next.insert(point)
+                    }
+                } else {
+                    if friends.count == 3 {
+                        next.insert(point)
+                    }
+                }
+            }
+        }
+        
+        world = next
+        
+        world.insert(Coordinate2D(x: 0, y: 0))
+        world.insert(Coordinate2D(x: 99, y: 0))
+        world.insert(Coordinate2D(x: 0, y: 99))
+        world.insert(Coordinate2D(x: 99, y: 99))
+    }
+    return world.count
+}
