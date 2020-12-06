@@ -11,3 +11,25 @@ public func part1() -> Int {
     }
     return acc
 }
+
+public func part2() -> Int {
+    let cc = numbersFromFile(named: "input")
+    var best = Int.max
+    var count = 0
+    
+    for sz in 1..<cc.count {
+        cc.combinations(taking: sz)
+            .forEach{ arr in
+                let sum = arr.reduce(0, +)
+                guard sum == 150 else { return }
+                let size = arr.count
+                if best == size {
+                    count += 1
+                } else if best > size {
+                    best = size
+                    count = 1
+                }
+            }
+    }
+    return count
+}
