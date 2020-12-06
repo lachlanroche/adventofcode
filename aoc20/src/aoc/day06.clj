@@ -29,6 +29,15 @@
        (map count)
        (reduce +)))
 
+(defn part2
+  []
+  (->> (input-data)
+       (map #(clojure.set/intersection %))
+       (map count)
+       (map #(if (nil? %) 0 %))
+       (reduce +)))
+
 (comment
   (part1)
+  (part2)
 )
