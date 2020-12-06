@@ -1,2 +1,2 @@
 #!/bin/sh
-clj -M:lib/cider-nrepl:inspect/rebl:middleware/nrebl
+exec clj -M:lib/cider-nrepl:inspect/rebl:middleware/nrebl
