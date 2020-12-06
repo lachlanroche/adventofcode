@@ -32,7 +32,7 @@
 (defn part2
   []
   (->> (input-data)
-       (map #(clojure.set/intersection %))
+       (map #(apply clojure.set/intersection %))
        (map count)
        (map #(if (nil? %) 0 %))
        (reduce +)))
