@@ -72,3 +72,28 @@ public func part1() -> Int {
     }.count
 }
 
+public func part2() -> Set<String> {
+    var claimed: Dictionary<Position, Set<String>> = [:]
+    var all: Set<String> = []
+    
+    inputData().forEach { elf in
+        all.insert(elf.id)
+        elf.claims.forEach { c in
+            if claimed[c] == nil {
+                claimed[c] = [elf.id]
+            } else {
+                var cc = claimed[c]
+                cc?.insert(elf.id)
+                claimed[c] = cc
+            }
+        }
+    }
+    
+    claimed.filter{ kv in
+        kv.value.count > 1
+    }.forEach { kv in
+        all.subtract(kv.value)
+    }
+
+    return all
+}
