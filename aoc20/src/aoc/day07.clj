@@ -52,6 +52,36 @@
          (ancestors-of "shiny gold")
          count)))
 
+(defn children-of
+  [n tree]
+  (->> (get tree n)))
+
+(defn weight-of
+  [n tree]
+  (let [children (children-of n tree)]
+    (if (empty? children)
+      1
+      (loop [cweight 0 children children]
+        (let [child (first children)
+              children (rest children)]
+          (cond
+            (nil? child)
+            (+ 1 cweight)
+            :else
+            (let [cn (key child)
+                  cw (val child)]
+              (recur (+ cweight (* cw (weight-of cn tree))) children))))))))
+
+(defn part2
+  []
+  (let [tree (->> (input-lines)
+                  (map parse-bag)
+                  (apply merge))]
+    (->> tree
+         (weight-of "shiny gold")
+         (+ -1))))
+
 (comment
   (part1)
+  (part2)
 )
