@@ -1,8 +1,8 @@
 import Foundation
 
-public func part1() -> Int {
-    var a = 0
-    var b = 0
+func evaluate(_ a0: Int, _ b0: Int) -> Int {
+    var a = a0
+    var b = b0
     var pc = 0
     let prog = stringsFromFile(named: "input")
         .filter{ $0 != "" }
@@ -71,4 +71,12 @@ public func part1() -> Int {
     }
         
     return b
+}
+
+public func part1() -> Int {
+    return evaluate(0, 0)
+}
+
+public func part2() -> Int {
+    return evaluate(1, 0)
 }
