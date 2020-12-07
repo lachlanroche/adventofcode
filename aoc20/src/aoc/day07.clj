@@ -10,6 +10,18 @@
         ]
     s))
 
+(defn parse-bag
+  [ss]
+  (let [name (str (nth ss 0) " " (nth ss 1))]
+    (if (= "no" (nth ss 4))
+      (hash-map name {})
+      (hash-map name
+                (->> ss
+                     (drop 4)
+                     (partition 4)
+                     (map #(hash-map (str (nth % 1) " " (nth % 2)) (Integer. (nth % 0))))
+                     (apply merge))))))
+
 (defn parents-of
   [n tree]
   (->> tree
