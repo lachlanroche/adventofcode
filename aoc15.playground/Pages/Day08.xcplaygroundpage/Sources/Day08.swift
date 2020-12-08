@@ -44,10 +44,15 @@ public extension String {
         chars.append("\"")
         
         for ch in self {
-            if ch == "\"" || ch == "\\" {
+            if ch == "\\" {
                 chars.append("\\")
+                chars.append("\\")
+            } else if ch == "\"" {
+                chars.append("\\")
+                chars.append("\"")
+            } else {
+                chars.append(ch)
             }
-            chars.append(ch)
         }
         
         chars.append("\"")
@@ -83,9 +88,11 @@ public func part1() -> Int {
 public func part2() -> Int {
     return inputstring()
         .components(separatedBy: "\n")
+        .filter{ $0 != "" }
         .reduce(0) {
             (acc, line) in
             let input = line.santaInput()
-            return acc + input.santaEncodeLength() - input.count
+            print("|\(input)|\(input.santaEncode())|")
+            return acc + input.santaEncode().count - input.count
         }
 }
