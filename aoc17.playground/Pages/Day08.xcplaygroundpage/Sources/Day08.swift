@@ -1,8 +1,13 @@
 import Foundation
 
+enum Max {
+    case runtime
+    case final
+}
 
-func evaluate() -> Int {
+func evaluate(withMax: Max) -> Int {
     var register = Dictionary<String, Int>()
+    var maxValue = 0
     
     func compare(_ op: String, _ a: Int, _ b: Int) -> Bool {
         if op == "==" {
@@ -39,12 +44,21 @@ func evaluate() -> Int {
                 let val = Int(s[2])!
                 let result = accumulate(s[1], reg_val, val)
                 register[s[0]] = result
+                maxValue = max(maxValue, result)
             }
         }
     
-    return register.map{ $0.value }.reduce(0, max)
+    if withMax == .final {
+        return register.map{ $0.value }.reduce(0, max)
+    } else {
+        return maxValue
+    }
 }
 
 public func part1() -> Int {
-    return evaluate()
+    return evaluate(withMax: .final)
+}
+
+public func part2() -> Int {
+    return evaluate(withMax: .runtime)
 }
