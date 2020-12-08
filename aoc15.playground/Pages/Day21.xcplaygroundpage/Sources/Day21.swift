@@ -71,3 +71,12 @@ public func part1() -> Int {
     }
     return -1
 }
+
+public func part2() -> Int {
+    for e in equipment().sorted{ $0.cost > $1.cost } {
+        if !e.fightBoss() {
+            return e.cost
+        }
+    }
+    return -1
+}
