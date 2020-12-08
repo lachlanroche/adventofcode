@@ -1,7 +1,7 @@
 import Foundation
 
 
-public func part1() -> Int {
+func evaluate() -> Int {
     var register = Dictionary<String, Int>()
     
     func compare(_ op: String, _ a: Int, _ b: Int) -> Bool {
@@ -43,4 +43,8 @@ public func part1() -> Int {
         }
     
     return register.map{ $0.value }.reduce(0, max)
+}
+
+public func part1() -> Int {
+    return evaluate()
 }
