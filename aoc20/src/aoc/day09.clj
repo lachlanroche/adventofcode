@@ -32,3 +32,31 @@
           :else
           n)))))
 
+(defn sublist-adds-to
+  [nums start length target]
+  (loop [acc 0 i 0]
+    (let [n (get nums (+ start i))]
+      (cond
+        (> acc target)
+        false
+        (and (= i length) (= acc target))
+        true
+        (nil? n)
+        false
+        :else
+        (recur (+ acc n) (inc i))))))
+
+(defn part2
+  []
+  (let [target (part1)
+        nums (vec (input-lines))]
+    (filter #(not (nil? %))
+            (for [i (range (count nums)) length (range 2 (count nums))]
+              (when (sublist-adds-to nums i length target)
+                (let [nn (take length (drop i nums))]
+                  (+ (apply min nn) (apply max nn))))))))
+
+(comment
+  (part1)
+  (part2)
+  )
