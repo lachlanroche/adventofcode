@@ -23,10 +23,19 @@
        (apply *)
        ))
 
+(defn tribonacci-seq
+  []
+   (->> (iterate (fn [[a b c]] [b c (+ a b c)]) [1 2 4])
+        (map first)
+        (take 15)
+        (concat (list 1 1))
+        vec))
+        ))
+
 (defn part2
  []
   (let [nums (input-lines)
-        mult [1 1 1 2 4 7 13 24 44 81 149 274 504]]
+        mult (tribonacci-seq)]
     (loop [acc (long 1) i 1 run 1]
       (let [n (get nums i)
             p (get nums (dec i))]
