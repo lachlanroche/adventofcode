@@ -31,3 +31,29 @@ public func part1() -> Int {
 
     return seen.count
 }
+
+public func part2() -> Int {
+    let world = inputData()
+    var seen = Set<Int>()
+    var groups = 0
+    
+    for start in world.keys.sorted() {
+        guard !seen.contains(start) else { continue }
+
+        groups += 1
+        var queue:Set<Int> = [start]
+    
+        while true {
+            guard let node = queue.first else { break }
+            queue.remove(node)
+            seen.insert(node)
+            for next in world[node]! {
+                if !seen.contains(next) {
+                    queue.insert(next)
+                }
+            }
+        }
+    }
+
+    return groups
+}
