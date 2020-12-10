@@ -66,3 +66,7 @@ public func part1() -> Int {
     let point = walk().last!
     return (abs(point.x) + abs(point.y)) / 2
 }
+
+public func part2() -> Int {
+    return walk().map{ (abs($0.x) + abs($0.y)) / 2 }.reduce(0, max)
+}
