@@ -32,7 +32,7 @@
         vec))
         ))
 
-(defn part2
+(defn part2a
  []
   (let [nums (input-lines)
         mult (tribonacci-seq)]
@@ -46,3 +46,13 @@
           (recur acc (inc i) (inc run))
           :else
           (recur (* acc (nth mult run)) (inc i) 1))))))
+
+(defn part2b
+  []
+  (let [mult (tribonacci-seq)]
+    (->> (input-lines)
+         (partition 2 1)
+         (map (fn [[a b]] (- b a)))
+         (partition-by #(= 1 %))
+         (map #(reduce (fn [acc n] (if (= 1 n) (inc acc) acc)) 1 %))
+         (reduce #(* %1 (nth mult %2)) (long 1)))))
