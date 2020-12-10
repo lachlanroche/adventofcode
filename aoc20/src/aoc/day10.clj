@@ -18,7 +18,7 @@
   []
   (->> (input-lines)
        (partition 2 1)
-       (group-by #(- (second %) (first %)))
+       (group-by (fn [[a b]] (- b a)))
        (map #(count (val %)))
        (apply *)
        ))
