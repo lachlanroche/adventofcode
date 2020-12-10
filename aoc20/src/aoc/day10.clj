@@ -23,3 +23,17 @@
        (apply *)
        ))
 
+(defn part2
+ []
+  (let [nums (input-lines)
+        mult [1 1 1 2 4 7 13 24 44 81 149 274 504]]
+    (loop [acc (long 1) i 1 run 1]
+      (let [n (get nums i)
+            p (get nums (dec i))]
+        (cond
+          (nil? n)
+          acc
+          (= n (inc p))
+          (recur acc (inc i) (inc run))
+          :else
+          (recur (* acc (nth mult run)) (inc i) 1))))))
