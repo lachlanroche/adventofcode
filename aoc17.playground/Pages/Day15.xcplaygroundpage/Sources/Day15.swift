@@ -16,3 +16,33 @@ public func part1() -> Int {
     return count
 }
 
+struct Generator {
+    var i: Int64
+    let factor: Int64
+    let divisor: Int64
+}
+
+extension Generator {
+    mutating func step() {
+        repeat {
+            i = (i * Int64(factor)).quotientAndRemainder(dividingBy: Int64(2147483647)).remainder
+        } while 0 != i % divisor
+    }
+    func matches(_ g: Generator) -> Bool {
+        return i & 65535 == g.i & 65535
+    }
+}
+
+public func part2() -> Int {
+    var a = Generator(i:722, factor: 16807, divisor: 4)
+    var b = Generator(i:354, factor: 48271, divisor: 8)
+    var count = 0
+    for i in 0..<5_000_000 {
+        a.step()
+        b.step()
+        if a.matches(b) {
+            count += 1
+        }
+    }
+    return count
+}
