@@ -49,7 +49,6 @@
   (loop [f \E xy [0 0] lines (input-lines)]
     (let [line (first lines)
           lines (rest lines)]
-      (tap> [xy f line])
       (cond
         (nil? line)
         (let [[x y] xy]
@@ -62,3 +61,39 @@
         (recur (turn f line) xy lines)
         :else
         (recur f xy lines)))))
+
+(defn translate
+  [[x y] [dx dy] dir]
+  (let [n (Integer. (clojure.string/join "" dir))
+        ]
+    [(+ x (* dx n)) (+ y (* dy n))]))
+
+(defn rotate
+  [[x y] dir]
+  (cond
+    (#{"L90" "R270"} dir)
+    [(- y) x]
+    (#{"L180" "R180"} dir)
+    [(- x) (- y)]
+    (#{"L270" "R90"} dir)
+    [y (- x)]))
+
+(defn part2
+  []
+  (loop [sxy [0 0] wxy [10 1] lines (input-lines)]
+    (let [line (first lines)
+          lines (rest lines)]
+      (cond
+        (nil? line)
+        (let [[x y] sxy]
+          (+ (abs x) (abs y)))
+        (#{\N \S \E \W} (first line))
+        (recur sxy (move wxy line) lines)
+
+        (#{\F} (first line))
+        (recur (translate sxy wxy (rest line)) wxy lines)
+
+        (#{\L \R} (first line))
+        (recur sxy (rotate wxy line) lines)
+        :else
+        (recur sxy wxy lines)))))
