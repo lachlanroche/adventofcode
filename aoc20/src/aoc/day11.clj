@@ -1,5 +1,4 @@
-(ns aoc20.day11
-  (:require [clojure.math.combinatorics :as combo]))
+(ns aoc20.day11)
 
 (defn input-data
   []
@@ -23,7 +22,7 @@
               (recur (rest s) (inc x) y canvas size))))))))
 
 (defn neighbors
-  [xy]
+  [_ xy]
   (if (nil? xy)
     []
     (let [[x y] xy]
@@ -40,15 +39,14 @@
        ])))
 
 (defn step-canvas
-  [canvas]
+  [canvas threshold neighbors-fn]
   (loop [result {} xys (keys canvas)]
     (let [xy (first xys)
           xys (rest xys)
           friends (->>
-                       (select-keys canvas (neighbors xy))
+                       (select-keys canvas (neighbors-fn canvas xy))
                        (filter #(= \# (val %)))
                        count)]
-      (tap> [xy friends])
       (cond
         (nil? xy)
         result
@@ -56,7 +54,7 @@
              (= 0 friends))
         (recur (assoc result xy \#) xys)
         (and (= \# (get canvas xy))
-             (>= friends 4))
+             (>= friends threshold))
         (recur (assoc result xy \L) xys)
         :else
         (recur (assoc result xy (get canvas xy)) xys)))))
@@ -71,7 +69,16 @@
   []
   (let [world (input-data)]
     (loop [canvas (:canvas world)]
-      (let [next-canvas (step-canvas canvas)]
+      (let [next-canvas (step-canvas canvas 4 neighbors)]
+        (if (not= canvas next-canvas)
+          (recur next-canvas)
+          (canvas-count next-canvas))))))
+
+(do
+  #_[]
+  (let [world (input-data)]
+    (loop [canvas (:canvas world)]
+      (let [next-canvas (step-canvas canvas neighbors)]
         (if (not= canvas next-canvas)
           (recur next-canvas)
           (canvas-count next-canvas))))))
