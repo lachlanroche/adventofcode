@@ -32,3 +32,11 @@
           (recur (inc i))
           (* bus (- i earliest)))))))
 
+; apparently this is "CRT"
+; paste result into wolfram alpha
+(defn part2
+  []
+  (->> (input-data)
+       :buses2
+       (map #(str "(t + " (first %) ") mod " (second %) " = 0"))
+       clojure.string/join))
