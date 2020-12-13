@@ -74,11 +74,40 @@
           (recur next-canvas)
           (canvas-count next-canvas))))))
 
-(do
-  #_[]
+(defn visible-neighbor-direction
+  [[max-x max-y] canvas [x y] [dx dy]]
+  (loop [x (+ x dx) y (+ y dy)]
+    (let [pt (get canvas [x y])]
+      (cond
+        (or (> 0 x)
+            (> 0 y)
+            (< max-x x)
+            (< max-y y))
+        [(inc max-y) (inc max-y)]
+        (nil? pt)
+        (recur (+ x dx) (+ y dy))
+        :else
+        [x y]))))
+
+(defn visible-neighbors
+  [size canvas xy]
+  (if (nil? xy)
+    []
+    (list
+          (visible-neighbor-direction size canvas xy [1 1])
+          (visible-neighbor-direction size canvas xy [0 1])
+          (visible-neighbor-direction size canvas xy [-1 1])
+          (visible-neighbor-direction size canvas xy [1 0])
+          (visible-neighbor-direction size canvas xy [-1 0])
+          (visible-neighbor-direction size canvas xy [1 -1])
+          (visible-neighbor-direction size canvas xy [0 -1])
+          (visible-neighbor-direction size canvas xy [-1 -1]))))
+
+(defn part2
+  []
   (let [world (input-data)]
     (loop [canvas (:canvas world)]
-      (let [next-canvas (step-canvas canvas neighbors)]
+      (let [next-canvas (step-canvas canvas 5 (partial visible-neighbors (:size world)))]
         (if (not= canvas next-canvas)
           (recur next-canvas)
           (canvas-count next-canvas))))))
