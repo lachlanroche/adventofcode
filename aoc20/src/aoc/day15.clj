@@ -21,8 +21,8 @@
       nil
       (- i p))))
 
-(defn part1
-  []
+(defn challenge
+  [j]
   (let [nums (input-data)]
     (loop [i 0 prev 0 age 0 when {} nums nums]
       (let [num (first nums)
@@ -30,9 +30,17 @@
         (cond
           (not (nil? num))
           (recur (inc i) num nil (assoc when num i) nums)
-          (= 2020 i)
+          (= j i)
           prev
           (nil? age)
           (recur (inc i) 0 (age-of i 0 when) (assoc when 0 i) nums)
           :else
           (recur (inc i) age (age-of i age when) (assoc when age i) nums))))))
+
+(defn part1
+  []
+  (challenge 2020))
+
+(defn part2
+  []
+  (challenge 30000000))
