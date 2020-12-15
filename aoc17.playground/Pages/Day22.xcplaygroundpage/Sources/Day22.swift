@@ -88,7 +88,7 @@ public func part1() -> Int {
     var direction = Direction.up
     var infections = 0
     
-    for _ in 1..<10_000 {
+    for _ in 0..<10_000 {
         
         if let _ = world[position] {
             direction = direction.turnRight()
@@ -110,7 +110,7 @@ public func part2() -> Int {
     var direction = Direction.up
     var infections = 0
     
-    for _ in 1..<10_000_000 {
+    for _ in 0..<10_000_000 {
         switch world[position] ?? .clean {
         case .clean:
             direction = direction.turnLeft()
