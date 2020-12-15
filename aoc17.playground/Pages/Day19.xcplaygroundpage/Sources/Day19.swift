@@ -49,11 +49,12 @@ extension Point {
 }
 
 
-public func part1() -> String {
+public func walk() -> (word: String, steps: Int) {
     let world = importData()
     var position = world.keys.filter{ $0.y == 0 }.first!
     var result = Array<Character>()
     var direction = Direction.down
+    var steps = 0
     
     while true {
         guard let c = world[position] else { break }
@@ -83,7 +84,16 @@ public func part1() -> String {
             }
         }
         position = position.step(direction)
+        steps += 1
     }
     
-    return String(result)
+    return (String(result), steps)
+}
+
+public func part1() -> String {
+    return walk().word
+}
+
+public func part2() -> Int {
+    return walk().steps
 }
