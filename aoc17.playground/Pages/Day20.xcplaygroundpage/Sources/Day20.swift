@@ -2,6 +2,7 @@ import Foundation
 
 func inputData() -> [Particle] {
     var result = [Particle]()
+    var i = 0
     for s in stringsFromFile(named: "input") {
         guard s != "" else { continue }
         let pva = s.components(separatedBy: " ")
@@ -11,18 +12,21 @@ func inputData() -> [Particle] {
         let pos = Point(x: Int(p[0])!, y: Int(p[1])!, z: Int(p[2])!)
         let acc = Point(x: Int(a[0])!, y: Int(a[1])!, z: Int(a[2])!)
         let vel = Point(x: Int(v[0])!, y: Int(v[1])!, z: Int(v[2])!)
-        result.append(Particle(pos: pos, acc: acc, vel: vel))
+        result.append(Particle(id: i, pos: pos, acc: acc, vel: vel))
+        i += 1
     }
     return result
 }
 
 struct Particle {
+    let id: Int
     var pos: Point
     var acc: Point
     var vel: Point
+    var alive = true
 }
 
-struct Point {
+struct Point: Hashable {
     var x: Int
     var y: Int
     var z: Int
@@ -62,4 +66,25 @@ public func part1() -> Int {
     }
     
     return result
+}
+
+public func part2() -> Int {
+    var particles = inputData()
+    
+    for _ in 0..<100_000 {
+        var places = Dictionary<Point, Int>()
+        for i in 0..<particles.count {
+            particles[i].step()
+            if let j = places[particles[i].pos] {
+                particles[i].alive = false
+                particles[j].alive = false
+            } else {
+                places[particles[i].pos] = i
+            }
+        }
+        
+        particles = particles.filter{ $0.alive }
+    }
+    
+    return particles.count
 }
