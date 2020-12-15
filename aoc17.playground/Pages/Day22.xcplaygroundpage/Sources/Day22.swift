@@ -1,7 +1,7 @@
 import Foundation
 
-func importData() -> Dictionary<Point, Character> {
-    var result = Dictionary<Point, Character>()
+func importData() -> Dictionary<Point, Infection> {
+    var result = Dictionary<Point, Infection>()
     var x = -12
     var y = -12
     for s in stringsFromFile(named: "input") {
@@ -10,7 +10,7 @@ func importData() -> Dictionary<Point, Character> {
         }
         for c in s {
             if c == "#" {
-                result[Point(x: x, y: y)] = c
+                result[Point(x: x, y: y)] = .infected
             }
             x += 1
         }
@@ -19,6 +19,12 @@ func importData() -> Dictionary<Point, Character> {
     }
     
     return result
+}
+
+enum Infection {
+    case weakened
+    case infected
+    case flagged
 }
 
 struct Point: Hashable {
@@ -80,7 +86,7 @@ public func part1() -> Int {
             world.removeValue(forKey: position)
         } else {
             direction = direction.turnLeft()
-            world[position] = "#"
+            world[position] = .infected
             infections += 1
         }
         position = position.step(direction)
