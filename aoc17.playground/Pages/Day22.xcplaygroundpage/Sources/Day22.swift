@@ -25,6 +25,7 @@ enum Infection {
     case weakened
     case infected
     case flagged
+    case clean
 }
 
 struct Point: Hashable {
@@ -56,6 +57,14 @@ extension Direction {
             case .left: return .up
         }
     }
+    func turnAround() -> Direction {
+        switch self {
+            case .up: return .down
+            case .right: return .left
+            case .down: return .up
+            case .left: return .right
+        }
+    }
 }
 
 extension Point {
@@ -79,7 +88,7 @@ public func part1() -> Int {
     var direction = Direction.up
     var infections = 0
     
-    for _ in 1..<10000 {
+    for _ in 1..<10_000 {
         
         if let _ = world[position] {
             direction = direction.turnRight()
@@ -89,6 +98,38 @@ public func part1() -> Int {
             world[position] = .infected
             infections += 1
         }
+        position = position.step(direction)
+    }
+    
+    return infections
+}
+
+public func part2() -> Int {
+    var world = importData()
+    var position = Point(x: 0, y: 0)
+    var direction = Direction.up
+    var infections = 0
+    
+    for _ in 1..<10_000_000 {
+        switch world[position] ?? .clean {
+        case .clean:
+            direction = direction.turnLeft()
+            world[position] = .weakened
+            break
+        case .weakened:
+            world[position] = .infected
+            infections += 1
+            break
+        case .infected:
+            direction = direction.turnRight()
+            world[position] = .flagged
+            break
+        case .flagged:
+            direction = direction.turnAround()
+            world.removeValue(forKey: position)
+            break
+        }
+        
         position = position.step(direction)
     }
     
