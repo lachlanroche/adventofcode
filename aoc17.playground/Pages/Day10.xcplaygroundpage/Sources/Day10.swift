@@ -1,9 +1,8 @@
 import Foundation
 
 
-public func part1() -> Int {
+func hash(_ lengths: [Int]) -> [Int] {
     var list = Array(0..<256)
-    var lengths = [183,0,31,146,254,240,223,150,2,206,161,1,255,232,199,88]
     var position = 0
     var skip = 0
 
@@ -21,5 +20,10 @@ public func part1() -> Int {
         skip += 1
     }
 
+    return list
+}
+
+public func part1() -> Int {
+    let list = hash([183,0,31,146,254,240,223,150,2,206,161,1,255,232,199,88])
     return list[0] * list[1]
 }
