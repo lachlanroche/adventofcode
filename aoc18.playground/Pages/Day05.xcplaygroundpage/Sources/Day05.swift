@@ -24,3 +24,17 @@ public func part1() -> Int {
     return react(with: Array(stringsFromFile(named: "input")[0]))
 }
 
+public func part2() -> Int {
+    let delta = Int(Character("a").asciiValue!) - Int(Character("A").asciiValue!)
+    let arr = Array(stringsFromFile(named: "input")[0])
+    var result = arr.count
+    
+    for i in 65...90 {
+        let c = Character(UnicodeScalar(i)!)
+        let d = Character(UnicodeScalar(i + delta)!)
+        let size = react(with: arr.filter{ $0 != c && $0 != d })
+        result = min(size, result)
+    }
+    
+    return result
+}
