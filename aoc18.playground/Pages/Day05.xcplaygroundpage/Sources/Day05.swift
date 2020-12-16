@@ -1,7 +1,7 @@
 import Foundation
 
-public func part1() -> Int {
-    var arr = Array(stringsFromFile(named: "input")[0])
+func react(with input: [Character]) -> Int {
+    var arr = input
     
     let delta = Int(Character("a").asciiValue!) - Int(Character("A").asciiValue!)
     var i = 0
@@ -18,5 +18,9 @@ public func part1() -> Int {
         }
     }
     return arr.count
+}
+
+public func part1() -> Int {
+    return react(with: Array(stringsFromFile(named: "input")[0]))
 }
 
