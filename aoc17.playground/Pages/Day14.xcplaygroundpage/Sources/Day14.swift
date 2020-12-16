@@ -42,14 +42,36 @@ public func knothash(of  str: String) -> [UInt8] {
     return data
 }
 
+extension BinaryInteger {
+    var hashDescription: String {
+        var binaryString = ""
+        var internalNumber = self
+        var counter = 0
+
+        for _ in (1...self.bitWidth) {
+            let c: Character
+            if 0 == internalNumber & 1 {
+                c = " "
+            } else {
+                c = "#"
+            }
+            binaryString.insert(c, at: binaryString.startIndex)
+            internalNumber >>= 1
+            counter += 1
+        }
+
+        return binaryString
+    }
+}
+
 public func part1() -> Int {
     let input = "hwlqcszp"
     var result = 0
     for i in 0..<128 {
         result += knothash(of: "\(input)-\(i)")
-            .map{ String($0, radix: 2)}
+            .map{ $0.hashDescription  }
             .joined()
-            .filter{$0 == "1"}
+            .filter{$0 == "#"}
             .count
     }
     return result
