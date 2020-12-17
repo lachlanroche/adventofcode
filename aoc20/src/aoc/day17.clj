@@ -20,7 +20,7 @@
             (let [size [(max max-x x) (max max-y y) 0]]
               (recur (rest s) (inc x) y canvas size))))))))
 
-(defn neighbors
+(defn neighbors-3d
   [[x y z]]
   (->> (for [dx [-1 0 1] dy [-1 0 1] dz [-1 0 1]]
          (if (= 0 dx dy dz)
@@ -29,29 +29,38 @@
        (filter #(not (nil? %)))
        set))
 
+(defn neighbors-4d
+  [[w x y z]]
+  (->> (for [dw [-1 0 1] dx [-1 0 1] dy [-1 0 1] dz [-1 0 1]]
+         (if (= 0 dw dx dy dz)
+           nil
+           [(+ w dw) (+ x dx) (+ y dy) (+ z dz)]))
+       (filter #(not (nil? %)))
+       set))
+
 (defn remain-active
-  [canvas]
+  [canvas neighbors-fn]
   (loop [result #{} points canvas]
     (let [point (first points)
           points (rest points)]
       (cond
         (nil? point)
         result
-        (<= 2 (count (clojure.set/intersection canvas (neighbors point))) 3)
+        (<= 2 (count (clojure.set/intersection canvas (neighbors-fn point))) 3)
         (recur (conj result point) points)
         :else
         (recur result points)))))
 
 
 (defn become-active
-  [canvas inactive]
+  [canvas inactive neighbors-fn]
   (loop [result #{} points inactive]
     (let [point (first points)
           points (rest points)]
       (cond
         (nil? point)
         result
-        (= 3 (count (clojure.set/intersection canvas (neighbors point))))
+        (= 3 (count (clojure.set/intersection canvas (neighbors-fn point))))
         (recur (conj result point) points)
         :else
         (recur result points)))))
@@ -66,8 +75,8 @@
         (count canvas)
         :else
         (let [near-actives (->> canvas
-                                (map neighbors)
+                                (map neighbors-3d)
                                 (reduce #(apply conj %1 %2 ) #{}))
               inactive (clojure.set/difference near-actives canvas)
-              canvas (clojure.set/union (remain-active canvas) (become-active canvas inactive))]
+              canvas (clojure.set/union (remain-active canvas neighbors-3d) (become-active canvas inactive neighbors-3d))]
           (recur (inc i) canvas))))))
