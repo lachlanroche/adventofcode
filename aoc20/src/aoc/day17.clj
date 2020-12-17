@@ -80,3 +80,22 @@
               inactive (clojure.set/difference near-actives canvas)
               canvas (clojure.set/union (remain-active canvas neighbors-3d) (become-active canvas inactive neighbors-3d))]
           (recur (inc i) canvas))))))
+
+(defn part2  []
+  (let [world (input-data)
+        canvas (:canvas world)
+        canvas (->> canvas
+                    (map (fn [[x y z]] [x y z 0]))
+                    set)
+        ]
+    (loop [i 0 canvas canvas]
+      (cond
+        (= 6 i)
+        (count canvas)
+        :else
+        (let [near-actives (->> canvas
+                                (map neighbors-4d)
+                                (reduce #(apply conj %1 %2 ) #{}))
+              inactive (clojure.set/difference near-actives canvas)
+              canvas (clojure.set/union (remain-active canvas neighbors-4d) (become-active canvas inactive neighbors-4d))]
+          (recur (inc i) canvas))))))
