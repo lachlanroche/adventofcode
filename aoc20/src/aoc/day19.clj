@@ -27,3 +27,13 @@
        (filter (complement :index))
        count)))
 
+(defn part2
+  []
+  (let [rules (-> (input-file "day19r")
+                  (clojure.string/replace #"8: 42" "8: 42 | 42 8")
+                  (clojure.string/replace #"11: 42 31" "11: 42 31 | 42 11 31")
+                  load-rules)]
+  (->> (load-messages)
+       (map rules)
+       (filter (complement :index))
+       count)))
