@@ -10,8 +10,8 @@
     s))
 
 (defn load-rules
-  []
-  (insta/parser (input-file "day19r") :start :0))
+  [str]
+  (insta/parser str :start :0))
 
 (defn load-messages
   []
@@ -20,8 +20,10 @@
 
 (defn part1
   []
+  (let [rules (-> (input-file "day19r")
+                  load-rules)]
   (->> (load-messages)
-       (map (load-rules))
+       (map rules)
        (filter (complement :index))
-       count))
+       count)))
 
