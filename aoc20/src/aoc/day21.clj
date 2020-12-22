@@ -45,7 +45,8 @@
             candidates (into {} (for [[k v] candidates] [k (disj v sv)]))]
         (recur result (rest singles) candidates)))))
 
-(defn part1 []
+(defn part1
+  []
   (let [foods (input-file)
         allergens (->> foods
                        (map :allergens)
@@ -72,4 +73,33 @@
          (map #(clojure.set/difference % candidates))
          (map count)
          (reduce + 0)
+         )))
+
+(defn part2
+  []
+  (let [foods (input-file)
+        allergens (->> foods
+                       (map :allergens)
+                       (apply clojure.set/union))
+        candidates (into {}
+                         (for [a allergens]
+                           [a (reduce (fn [acc {:keys [ingredients allergens]}]
+                                        (cond
+                                          (not (allergens a))
+                                          acc
+                                          (nil? acc)
+                                          ingredients
+                                          :else
+                                          (clojure.set/intersection acc ingredients)))
+                                      nil
+                                      foods)]))
+        candidate-map (->> candidates
+                           solve-candidates)
+        candidate-set (->> candidate-map
+                           (map key)
+                           set)
+        ]
+    (->> candidate-set
+         (sort-by #(get candidate-map %))
+         (clojure.string/join ",")
          )))
