@@ -55,3 +55,38 @@
   []
   (play-all (input-file)))
 
+(defn play-game
+  [aa bb]
+  (loop [seen #{} aa aa bb bb]
+    (let [hash (clojure.string/join "," (concat aa [0] bb))
+          fresh? (nil? (seen hash))
+          seen (conj seen hash)
+          a (first aa)
+          aa (rest aa)
+          b (first bb)
+          bb (rest bb)
+          ]
+      (cond
+        (nil? b)
+        ["a" (concat [a] aa)]
+        (nil? a)
+        ["b" (concat [b] bb)]
+        (not fresh?)
+        ["a" (concat [a] aa)]
+        (and (<= a (count aa))
+             (<= b (count bb)))
+        (let [[winner _] (play-game (take a aa) (take b bb))]
+          (if (= "a" winner)
+            (recur seen (concat aa [a b]) bb)
+            (recur seen aa (concat bb [b a]))))
+        :else
+        (if (> a b)
+          (recur seen (concat aa [a b]) bb)
+          (recur seen aa (concat bb [b a])))))))
+
+(defn part2
+  []
+  (let [[aa bb] (input-file)]
+    (->> (play-game aa bb)
+         second
+         score)))
