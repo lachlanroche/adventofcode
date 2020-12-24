@@ -54,3 +54,37 @@
   []
   (->> (load-world)
        count))
+
+(defn neighbors
+  [[x y]]
+  #{[(+ x 2) y]
+    [(+ x 1) (+ y 1)]
+    [(- x 1) (+ y 1)]
+    [(- x 2) y]
+    [(- x 1) (- y 1)]
+    [(+ x 1) (- y 1)]})
+
+(defn part2
+  []
+  (loop [i 0 world (load-world)]
+    (tap> [(count world)])
+    (if (= i 100)
+      (count world)
+      (let [friend-set (->> world
+                            (map neighbors)
+                            (apply clojure.set/union)
+                            (clojure.set/intersection world))
+            stay-black (->> world
+                            (filter #(= 1 (count (clojure.set/intersection
+                                                  friend-set
+                                                  (neighbors %)))))
+                            set)
+            be-black (->> world
+                          (map neighbors)
+                          (apply concat)
+                          frequencies
+                          (filter #(= 2 (val %)))
+                          keys
+                          set)
+            ]
+        (recur (inc i) (clojure.set/union stay-black be-black))))))
