@@ -1,5 +1,4 @@
-(ns aoc20.day17
-  (:require [clojure.math.combinatorics :as combo]))
+(ns aoc20.day17)
 
 (defn input-data
   []

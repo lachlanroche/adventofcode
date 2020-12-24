@@ -1,5 +1,4 @@
-(ns aoc20.day21
-  (:require [instaparse.core :as insta]))
+(ns aoc20.day21)
 
 (defn parse-line
   [line]
