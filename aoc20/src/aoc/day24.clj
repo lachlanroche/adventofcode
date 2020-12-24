@@ -36,7 +36,7 @@
                (= q \e))
           (recur (+ x 1) (- y 1) (rest (rest path))))))))
 
-(defn part1
+(defn load-world
   []
   (loop [world #{} lines (input-lines)]
     (let [line (first lines)
@@ -44,8 +44,13 @@
           xy (path-coord line)]
       (cond
         (nil? line)
-        (count world)
+        world
         (world xy)
         (recur (disj world xy) lines)
         :else
         (recur (conj world xy) lines)))))
+
+(defn part1
+  []
+  (->> (load-world)
+       count))
