@@ -1,4 +1,4 @@
-(ns aoc20.day13
+(ns aoc20.day18
   (:require [instaparse.core :as insta]))
 
 (defn input-data
@@ -7,7 +7,6 @@
                clojure.java.io/resource
                slurp
                clojure.string/split-lines
-               #_(map #(clojure.string/split % #" "))
                )]
     s))
 
@@ -20,6 +19,14 @@
      <term> = number | <'('> add-mul <')'>
      number = #'[0-9]+'"
     :auto-whitespace :standard))
+
+(def parse-tree->sexp
+  {
+   :expr identity
+   :add +
+   :mul *
+   :number read-string
+   })
 
 (defn part1
   []
