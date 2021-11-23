@@ -64,3 +64,21 @@ public func part1() -> Int {
 
     return closest.values.max() ?? 0
 }
+
+public func part2() -> Int {
+    let points = stringsFromFile().compactMap( Point.init )
+
+    var region = 0
+ 
+    for x in -1000...1000 {
+        for y in -1000...1000 {
+            let p = Point(x: x, y: y)
+            let d = points.reduce(0) { $0 + p.manhattan($1) }
+            if d < 10000 {
+                region = 1 + region
+            }
+        }
+    }
+    
+    return region
+}
