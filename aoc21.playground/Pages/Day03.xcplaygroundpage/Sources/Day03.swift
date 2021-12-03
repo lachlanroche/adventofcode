@@ -46,3 +46,50 @@ public func part1() -> Int {
     
     return gamma * epsilon
 }
+
+func bitstringToInt(_ s: String, bits: Int = 12) -> Int {
+    var result = 0
+    for i in 0..<bits {
+        result = 2 * result
+        if s[i] == "1" {
+            result = 1 + result
+        }
+    }
+    return result
+}
+
+func oxygen(_ data: [String], bit: Int = 0) -> String {
+    if data.count == 1 {
+        return data[0]
+    }
+    
+    let a = data.filter { $0[bit] == "1" }
+    let b = data.filter { $0[bit] == "0" }
+
+    if a.count >= b.count {
+        return oxygen(a, bit: 1 + bit)
+    } else {
+        return oxygen(b, bit: 1 + bit)
+    }
+}
+
+func scrubber(_ data: [String], bit: Int = 0) -> String {
+    if data.count == 1 {
+        return data[0]
+    }
+    
+    let a = data.filter { $0[bit] == "1" }
+    let b = data.filter { $0[bit] == "0" }
+
+    if b.count <= a.count {
+        return scrubber(b, bit: 1 + bit)
+    } else {
+        return scrubber(a, bit: 1 + bit)
+    }
+}
+
+public func part2() -> Int {
+    let data = stringsFromFile().filter { $0.count == 12 }
+    
+    return bitstringToInt(oxygen(data)) * bitstringToInt(scrubber(data))
+}
