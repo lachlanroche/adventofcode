@@ -69,5 +69,9 @@ public func part1() -> Int {
     return winner.score * winner.number
 }
 
+public func part2() -> Int {
+    let winner = bingoBoards().sorted(by: { $0.count > $1.count })[0]
+    return winner.score * winner.number
+}
 
 //: [Next](@next)
