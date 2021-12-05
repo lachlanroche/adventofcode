@@ -50,11 +50,12 @@ func inputData() -> [Point] {
     return result
 }
 
-public func part1() {
+public func part1() -> Int {
     var points = inputData()
     
     var prev = points
     var yr = 1_000_000
+    var n = 0
     while true {
         points = points.map { $0.step() }
         let ys = points.map { $0.y }
@@ -75,10 +76,11 @@ public func part1() {
                 }
                 print()
             }
-            return
+            return n
         }
 
         prev = points
         yr = yr2
+        n = 1 + n
     }
 }
