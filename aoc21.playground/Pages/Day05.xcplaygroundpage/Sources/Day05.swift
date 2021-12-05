@@ -47,3 +47,55 @@ public func part1() -> Int {
     return seen.filter { k, v in v > 1 }.count
 }
 
+func line2(p1: Point, p2: Point) -> [Point] {
+    var result = [Point]()
+    
+    var x0 = p1.x
+    var x1 = p2.x
+    var dx = x1 - x0
+    var y0 = p1.y
+    var y1 = p2.y
+    var dy = y1 - y0
+    
+    var x = x0
+    var y = y0
+    while true {
+        let q = Point(x: x, y: y)
+        result.append(q)
+        if q == p2 {
+            return result
+        }
+
+        if y1 > y0 {
+            y = y + 1
+        }
+        if y1 < y0 {
+            y = y - 1
+        }
+        if x1 > x0 {
+            x = x + 1
+        }
+        if x1 < x0 {
+            x = x - 1
+        }
+    }
+}
+
+public func part2() -> Int {
+    let inputData: [[Point]] = stringsFromFile()
+        .filter { $0 != "" }
+        .map { $0.components(separatedBy: " -> ")}
+        .map { $0.map(parsePair) }
+        
+    let data = inputData
+
+    var seen = Dictionary<Point,Int>()
+    
+    for pp in data {
+        for p in line2(p1: pp[0], p2: pp[1]) {
+            seen[p] = 1 + (seen[p] ?? 0)
+        }
+    }
+    
+    return seen.filter { k, v in v > 1 }.count
+}
