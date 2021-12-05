@@ -30,3 +30,16 @@ public func numbersFromString(_ str: String, sep: String = ",") -> [Int]
     return stringsFromString(str, sep: sep)
         .compactMap(Int.init)
 }
+
+public extension String {
+    public subscript(_ range: CountableRange<Int>) -> String {
+        let start = index(startIndex, offsetBy: max(0, range.lowerBound))
+        let end = index(start, offsetBy: min(self.count - range.lowerBound, range.upperBound - range.lowerBound))
+        return String(self[start..<end])
+    }
+    
+    public subscript(_ range: CountablePartialRangeFrom<Int>) -> String {
+        let start = index(startIndex, offsetBy: max(0, range.lowerBound))
+        return String(self[start...])
+    }
+}
