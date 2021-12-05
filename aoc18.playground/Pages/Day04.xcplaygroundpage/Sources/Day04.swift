@@ -12,7 +12,9 @@ func sleep(from: String, to: String) -> [Int] {
     return Array(f..<t)
 }
 
-public func part1() -> Int {
+typealias GuardsData = (guards: Dictionary<Guard, Int>, guardsTotal: Dictionary<Int,Int>)
+
+func guards() -> GuardsData {
     var inputData = stringsFromFile().filter { "" != $0 }.sorted()
     var guards = Dictionary<Guard, Int>()
     var guardsTotal = Dictionary<Int,Int>()
@@ -46,9 +48,21 @@ public func part1() -> Int {
             id = Int(e.components(separatedBy: "#")[1].split(separator: " ")[0])!
         }
     }
-
-    let gid = guardsTotal.enumerated().sorted(by: {$0.element.value > $1.element.value}).map { $0.element.key }[0]
     
-    return guards.enumerated().filter { $0.element.key.id == gid }.sorted(by: { $0.element.value > $1.element.value }).map { $0.element.key.id * $0.element.key.minute }[0] ?? 0
+    return (guards: guards, guardsTotal: guardsTotal)
+}
+
+public func part1() -> Int {
+    let result = guards()
+
+    let gid = result.guardsTotal.enumerated().sorted(by: {$0.element.value > $1.element.value}).map { $0.element.key }[0]
+    
+    return result.guards.enumerated().filter { $0.element.key.id == gid }.sorted(by: { $0.element.value > $1.element.value }).map { $0.element.key.id * $0.element.key.minute }[0] ?? 0
+}
+
+public func part2() -> Int {
+    let result = guards()
+
+    return result.guards.enumerated().sorted(by: { $0.element.value > $1.element.value }).map { $0.element.key.id * $0.element.key.minute }[0] ?? 0
 }
 
