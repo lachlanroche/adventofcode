@@ -3,13 +3,13 @@ import Foundation
 let ELF = 468
 let MARBLE = 71843
 
-public func part1() -> Int {
+func game(marbles: Int = MARBLE) -> Int {
     var scores = Dictionary<Int,Int>()
     var circle = [0]
     var current = 1
     var elf = 1
     
-    for m in 1...MARBLE {
+    for m in 1...marbles {
         if 0 == m % 23 {
             var pos = (current + circle.count - 7) % circle.count
             if pos == circle.count - 1 {
@@ -33,6 +33,10 @@ public func part1() -> Int {
     return scores.values.max()!
 }
 
+public func part1() -> Int {
+    return game()
+}
+
 public func part2() -> Int {
-    return 0
+    return game(marbles: 100 * MARBLE)
 }
