@@ -17,3 +17,26 @@ public func part1() -> Int {
     return fish.count
 }
 
+public func quickFish(_ days: Int) -> Int {
+    var data = inputData()
+    var fish = [Int]()
+    
+    for i in 0..<9 {
+        fish.append(data.filter {$0 == i}.count)
+    }
+    
+    for i in 0..<days {
+        var newFish = fish
+        newFish.remove(at: 0)
+        newFish.append(fish[0])
+        newFish[6] = newFish[6] + fish[0]
+        
+        fish = newFish
+    }
+    
+    return fish.reduce(0) { $0 + $1 }
+}
+
+public func part2() -> Int {
+    return quickFish(256)
+}
