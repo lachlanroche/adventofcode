@@ -45,3 +45,19 @@ public func part1() -> Int {
     return world.reduce(0, +)
 }
 
+public func part2() -> Int {
+    let data = inputData()
+    var world = data.0
+    
+    var curr = 0
+    var step = 0
+    for _ in 0..<1000 {
+        // print(world.reduce(0, +))
+        world = generate(world: world, rules: data.1)
+        var next = world.reduce(0, +)
+        step = next - curr
+        curr = next
+    }
+    
+    return curr + (50_000_000_000 - 1000) * step
+}
