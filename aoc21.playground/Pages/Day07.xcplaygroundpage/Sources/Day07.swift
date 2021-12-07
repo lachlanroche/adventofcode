@@ -17,3 +17,20 @@ public func part1() -> Int {
     
     return cost
 }
+
+func triangle(_ n: Int) -> Int {
+    return n * (n + 1) / 2
+}
+
+public func part2() -> Int {
+    let data = inputData()
+    var cost = Int.max
+    for i in 0...data.max()! {
+        let c = data.reduce(0) {$0 + triangle(abs($1-i))}
+        if c < cost {
+            cost = c
+        }
+    }
+    
+    return cost
+}
