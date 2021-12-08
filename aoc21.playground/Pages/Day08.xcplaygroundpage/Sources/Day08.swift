@@ -17,3 +17,15 @@ public func part1() -> Int {
     
     return result
 }
+
+public func part1b() -> Int {
+    var result = 0
+    for str in stringsFromFile() {
+        guard str.contains(" | ") else { continue }
+        let s = str.components(separatedBy: " | ")
+        
+        result = result + s[1].components(separatedBy: " ").filter { [2, 3, 4, 7].contains($0.count) }.count
+    }
+    
+    return result
+}
