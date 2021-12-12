@@ -39,3 +39,33 @@ public func part1() -> Int {
     return search("start", visited: ["start"])
 }
 
+public func part2() -> Int {
+    
+    func search(_ pos: String, visited: Set<String>, twice: Bool) -> Int {
+        if pos == "end" {
+            return 1
+        }
+        
+        var count = 0
+        for next in edges[pos]! {
+            if next == "start" {
+                continue
+            }
+            if next == next.lowercased() && next != "end" {
+                if visited.contains(next) {
+                    if !twice {
+                        count = count + search(next, visited: visited.union([next]), twice: true)
+                    }
+                } else {
+                    count = count + search(next, visited: visited.union([next]), twice: twice)
+                }
+            } else {
+                count = count + search(next, visited: visited, twice: twice)
+            }
+        }
+        return count
+    }
+    
+    let edges = inputData()
+    return search("start", visited: ["start"], twice: false)
+}
