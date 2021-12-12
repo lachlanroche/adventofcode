@@ -85,3 +85,13 @@ public func part1() -> Int {
     }
     return result
 }
+
+public func part2() -> Int {
+    var world = inputData()
+    for i in 1...Int.max {
+        if 100 == step(&world) {
+            return i
+        }
+    }
+    return 0
+}
