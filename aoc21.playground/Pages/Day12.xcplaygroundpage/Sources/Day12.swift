@@ -15,27 +15,27 @@ func inputData() -> Dictionary<String,Set<String>> {
     return result
 }
 
-func search(_ pos: String, edges: Dictionary<String,Set<String>>, visited: Set<String>) -> Int {
-    if pos == "end" {
-        return 1
-    }
-    
-    var count = 0
-    for next in edges[pos]! {
-        if next == next.lowercased() && next != "end" {
-            if !visited.contains(next) {
-                count = count + search(next, edges: edges, visited: visited.union([next]))
-            }
-        } else {
-            count = count + search(next, edges: edges, visited: visited)
-        }
-    }
-    return count
-}
-
 public func part1() -> Int {
-    let edges = inputData()
+
+    func search(_ pos: String, visited: Set<String>) -> Int {
+        if pos == "end" {
+            return 1
+        }
+        
+        var count = 0
+        for next in edges[pos]! {
+            if next == next.lowercased() && next != "end" {
+                if !visited.contains(next) {
+                    count = count + search(next, visited: visited.union([next]))
+                }
+            } else {
+                count = count + search(next, visited: visited)
+            }
+        }
+        return count
+    }
     
-    return search("start", edges: edges, visited: ["start"])
+    let edges = inputData()
+    return search("start", visited: ["start"])
 }
 
