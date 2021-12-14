@@ -61,3 +61,21 @@ public func part1() -> Int {
     return score
 }
 
+public func part2() -> Int {
+    let depths = depths()
+    for d in 0...Int.max {
+        var ok = true
+        for t in 0...90 {
+            guard let depth = depths[t] else { continue }
+            let caught = 0 == (t + d) % ((depth - 1 ) * 2)
+            if caught {
+                ok = false
+                break
+            }
+        }
+        if ok {
+            return d
+        }
+    }
+    return 0
+}
