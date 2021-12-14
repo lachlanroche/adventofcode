@@ -34,6 +34,7 @@ struct Player: Monster {
 
 struct Battle {
     var t = 0
+    var difficultMode = false
     var boss = Boss()
     var player = Player()
     var spellsCast = [Spell]()
@@ -47,6 +48,13 @@ var bestManaSpent = Int.max
 
 func fight(_ battle: Battle) -> [Battle] {
     var war = battle
+    
+    if war.difficultMode && 0 == war.t % 2 {
+        war.player.injure(1)
+        if war.player.isDead {
+            return []
+        }
+    }
     
     if war.poison_t > 0 {
         war.boss.injure(3)
@@ -153,3 +161,11 @@ public func part1() -> Int {
     return result.manaSpent
 }
 
+public func part2() -> Int {
+    bestManaSpent = Int.max
+    var battle = Battle()
+    battle.difficultMode = true
+    let result = fight(battle).sorted(by: { $0.manaSpent < $1.manaSpent }).first!
+    print(result.spellsCast)
+    return result.manaSpent
+}
