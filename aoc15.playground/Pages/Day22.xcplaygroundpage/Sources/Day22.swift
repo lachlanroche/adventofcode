@@ -147,6 +147,9 @@ func fight(_ battle: Battle) -> [Battle] {
 }
 
 public func part1() -> Int {
-    return fight(Battle()).sorted(by: { $0.manaSpent < $1.manaSpent }).first!.manaSpent
+    bestManaSpent = Int.max
+    let result = fight(Battle()).sorted(by: { $0.manaSpent < $1.manaSpent }).first!
+    print(result.spellsCast)
+    return result.manaSpent
 }
 
