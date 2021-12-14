@@ -46,3 +46,12 @@ public func part1() -> Int {
     return result
 }
 
+public func part2() -> Int {
+    
+    func score(_ b: [Port]) -> Int {
+        return b.reduce(0) { $0 + $1.a + $1.b}
+    }
+    
+    let b = bridges(bridge: [.zero], ports: ports()).sorted(by: { $0.count > $1.count || score($0) > score($1) }).first!
+    return score(b)
+}
