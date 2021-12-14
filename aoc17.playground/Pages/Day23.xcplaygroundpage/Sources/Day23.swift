@@ -58,3 +58,34 @@ public func part1() -> Int {
     
     return mulCount
 }
+
+public func part2() -> Int {
+    var a = 1
+    var b = 67
+    var c = 67
+    var d = 0
+    var f = 0
+    var g = 0
+    var h = 0
+    
+    b = b * 100 + 100000
+    c = b + 17000
+    while true {
+        f = 1
+        d = 2
+        var i = d
+        while i * i < b {
+            if b % i == 0 {
+                f = 0
+                break
+            }
+            i = 1 + i
+        }
+        if f == 0 { h = 1 + h }
+        g = b - c
+        b = b + 17
+        if g == 0 { break }
+    }
+
+    return h
+}
