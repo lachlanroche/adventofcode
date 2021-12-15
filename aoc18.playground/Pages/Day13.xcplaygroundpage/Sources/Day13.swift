@@ -160,3 +160,43 @@ public func part1() -> String {
     return ""
 }
 
+func tick2(world: Dictionary<Point2D,Character>, carts cartsOriginal: [Cart]) -> ([Cart], Point2D?) {
+    
+    let carts = cartsOriginal
+    var cartsNew = [Cart]()
+    var coords = Set(carts.map {$0.coord})
+    var collisions = Set<Point2D>()
+    for var c in Array(carts.sorted(by: {a, b in a.coord.x < b.coord.x || a.coord.y < b.coord.y})) {
+        
+        coords.remove(c.coord)
+        if collisions.contains(c.coord) {
+            continue
+        }
+        c.move(in: world)
+        if coords.contains(c.coord) {
+            collisions.insert(c.coord)
+            continue
+        }
+        coords.insert(c.coord)
+        cartsNew.append(c)
+    }
+    
+    return (cartsNew.filter({ !collisions.contains($0.coord) }), collisions.first)
+}
+
+public func part2() -> String {
+    let data = inputData()
+    let world = data.world
+    var carts = data.carts
+
+    while (true) {
+        let next = tick2(world: world, carts: carts)
+        if next.0.count == 1 {
+            let last = next.0[0].coord
+            return "\(last.x),\(last.y)"
+        }
+        carts = next.0
+    }
+    
+    return ""
+}
