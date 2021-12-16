@@ -43,6 +43,30 @@ struct World {
     let lumber: Set<Point2D>
 }
 
+func step(tree: inout Set<Point2D>, lumber: inout Set<Point2D>) {
+    let openTree = tree
+        .flatMap({ $0.neighbors() })
+        .filter({ !lumber.contains($0) && !tree.contains($0) })
+        .filter({ 0..<50 ~= $0.x && 0..<50 ~= $0.y })
+        .reduce(into: [:], { $0[$1] = 1 + $0[$1, default: 0] })
+        .compactMap({ $0.value >= 3 ? $0.key : nil })
+
+    let treeLumber = tree.filter {
+        Set($0.neighbors()).intersection(lumber).count >= 3
+    }
+
+    let lumberOpen = lumber.filter {
+        l in
+        let neighbors = Set(l.neighbors())
+        return neighbors.intersection(tree).isEmpty || neighbors.intersection(lumber).isEmpty
+    }
+
+    tree.subtract(treeLumber)
+    tree.formUnion(openTree)
+    lumber.subtract(lumberOpen)
+    lumber.formUnion(treeLumber)
+}
+
 func draw(tree: Set<Point2D>, lumber: Set<Point2D>) -> String {
     var s = [Character]()
     for y in 0..<50 {
@@ -67,27 +91,7 @@ public func part1() -> Int {
     var lumber = world.lumber
 
     for i in 0..<10 {
-        let openTree = tree
-            .flatMap({ $0.neighbors() })
-            .filter({ !lumber.contains($0) && !tree.contains($0) })
-            .filter({ 0..<50 ~= $0.x && 0..<50 ~= $0.y })
-            .reduce(into: [:], { $0[$1] = 1 + $0[$1, default: 0] })
-            .compactMap({ $0.value >= 3 ? $0.key : nil })
-
-        let treeLumber = tree.filter {
-            Set($0.neighbors()).intersection(lumber).count >= 3
-        }
-
-        let lumberOpen = lumber.filter {
-            l in
-            let neighbors = Set(l.neighbors())
-            return neighbors.intersection(tree).isEmpty || neighbors.intersection(lumber).isEmpty
-        }
-
-        tree.subtract(treeLumber)
-        tree.formUnion(openTree)
-        lumber.subtract(lumberOpen)
-        lumber.formUnion(treeLumber)
+        step(tree: &tree, lumber: &lumber)
     }
     
     return tree.count * lumber.count
@@ -101,27 +105,7 @@ public func part2() -> Int {
     var patterns = [String:(Int,Int)]()
 
     for i in 1..<1000 {
-        let openTree = tree
-            .flatMap({ $0.neighbors() })
-            .filter({ !lumber.contains($0) && !tree.contains($0) })
-            .filter({ 0..<50 ~= $0.x && 0..<50 ~= $0.y })
-            .reduce(into: [:], { $0[$1] = 1 + $0[$1, default: 0] })
-            .compactMap({ $0.value >= 3 ? $0.key : nil })
-
-        let treeLumber = tree.filter {
-            Set($0.neighbors()).intersection(lumber).count >= 3
-        }
-
-        let lumberOpen = lumber.filter {
-            l in
-            let neighbors = Set(l.neighbors())
-            return neighbors.intersection(tree).isEmpty || neighbors.intersection(lumber).isEmpty
-        }
-
-        tree.subtract(treeLumber)
-        tree.formUnion(openTree)
-        lumber.subtract(lumberOpen)
-        lumber.formUnion(treeLumber)
+        step(tree: &tree, lumber: &lumber)
         
         let drawn = draw(tree: tree, lumber: lumber)
         if let (t, _) = patterns[drawn] {
