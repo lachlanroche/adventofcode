@@ -30,7 +30,7 @@ func num(_ bits: ArraySlice<Character>) -> Int {
     return bits.map({ $0 == "0" ? 0 : 1}).reduce(0) {2 * $0 + $1}
 }
 
-func packet(bits: inout [Character], versions: inout Int) {
+func packet(bits: inout [Character], versions: inout Int) -> Int {
     let version = num(bits[0..<3])
     versions = versions + version
     let type = num(bits[3..<6])
@@ -44,6 +44,7 @@ func packet(bits: inout [Character], versions: inout Int) {
             bits.removeFirst(5)
             guard literalFlag == Character("1") else { break }
         }
+        return literal
         
     } else {
         let ltype = bits.removeFirst()
@@ -55,15 +56,27 @@ func packet(bits: inout [Character], versions: inout Int) {
             var subData = Array(bits[0..<subBits])
             bits.removeFirst(subBits)
             while subData.count > 7 {
-                packet(bits: &subData, versions: &versions)
+                items.append(packet(bits: &subData, versions: &versions))
             }
             
         } else {
             let subPackets = num(bits[0..<11])
             bits.removeFirst(11)
             for _ in 0..<subPackets {
-                packet(bits: &bits, versions: &versions)
+                items.append(packet(bits: &bits, versions: &versions))
             }
+        }
+            
+        switch type {
+        case 0: return items.reduce(0, +)
+        case 1: return items.reduce(1, *)
+        case 2: return items.min()!
+        case 3: return items.max()!
+        case 5: return items[0] > items[1] ? 1 : 0
+        case 6: return items[0] < items[1] ? 1 : 0
+        case 7: return items[0] == items[1] ? 1 : 0
+        default: return 0
+        }
     }
 }
 
@@ -74,3 +87,8 @@ public func part1() -> Int {
     return versions
 }
 
+public func part2() -> Int {
+    var data = inputData().flatMap({decode(hex: $0)})
+    var versions = 0
+    return packet(bits: &data, versions: &versions)
+}
