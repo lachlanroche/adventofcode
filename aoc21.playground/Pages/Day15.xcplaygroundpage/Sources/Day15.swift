@@ -82,3 +82,34 @@ public func part1() -> Int {
     return result.reduce(-1) { $0 + world[$1]! }
 }
 
+func inputData2() -> Dictionary<Point2D,Int> {
+    var result = Dictionary<Point2D,Int>()
+    var y = 0
+    for str in stringsFromFile() {
+        guard str != "" else { continue }
+        var x = 0
+        for c in str {
+            let v = Int(c.asciiValue!) - 48
+            
+            for ny in 0..<5 {
+                for nx in 0..<5 {
+                    let p = Point2D(x: x + nx * 100, y: y + ny * 100)
+                    var nv = (v + nx + ny) % 9
+                    if nv == 0 { nv = 9 }
+                    result[p] = nv
+                }
+            }
+            x = 1 + x
+        }
+        y = 1 + y
+    }
+    return result
+}
+
+public func part2() -> Int {
+    let world = inputData2()
+    let start = Point2D(x: 0, y: 0)
+    let goal = Point2D(x: 499, y: 499)
+    let result = astar(start: start, goal: goal, world: world)
+    return result.reduce(-1) { $0 + world[$1]! }
+}
