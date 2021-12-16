@@ -43,6 +43,24 @@ struct World {
     let lumber: Set<Point2D>
 }
 
+func draw(tree: Set<Point2D>, lumber: Set<Point2D>) -> String {
+    var s = [Character]()
+    for y in 0..<50 {
+        for x in 0..<50 {
+            let p = Point2D(x: x, y: y)
+            if tree.contains(p) {
+                s.append("|")
+            } else if lumber.contains(p) {
+                s.append("#")
+            } else {
+                s.append(".")
+            }
+        }
+        s.append("\n")
+    }
+    return String(s)
+}
+
 public func part1() -> Int {
     let world = inputData()
     var tree = world.tree
@@ -75,3 +93,47 @@ public func part1() -> Int {
     return tree.count * lumber.count
 }
 
+public func part2() -> Int {
+    let world = inputData()
+    var tree = world.tree
+    var lumber = world.lumber
+
+    var patterns = [String:(Int,Int)]()
+
+    for i in 1..<1000 {
+        let openTree = tree
+            .flatMap({ $0.neighbors() })
+            .filter({ !lumber.contains($0) && !tree.contains($0) })
+            .filter({ 0..<50 ~= $0.x && 0..<50 ~= $0.y })
+            .reduce(into: [:], { $0[$1] = 1 + $0[$1, default: 0] })
+            .compactMap({ $0.value >= 3 ? $0.key : nil })
+
+        let treeLumber = tree.filter {
+            Set($0.neighbors()).intersection(lumber).count >= 3
+        }
+
+        let lumberOpen = lumber.filter {
+            l in
+            let neighbors = Set(l.neighbors())
+            return neighbors.intersection(tree).isEmpty || neighbors.intersection(lumber).isEmpty
+        }
+
+        tree.subtract(treeLumber)
+        tree.formUnion(openTree)
+        lumber.subtract(lumberOpen)
+        lumber.formUnion(treeLumber)
+        
+        let drawn = draw(tree: tree, lumber: lumber)
+        if let (t, _) = patterns[drawn] {
+            let cycle = i - t
+            if 0 == (1_000_000_000 - i) % cycle {
+                return tree.count * lumber.count
+            }
+        }
+
+        patterns[drawn] = (i, tree.count * lumber.count)
+        print("\(i) \(tree.count * lumber.count)")
+    }
+    
+    return 0
+}
