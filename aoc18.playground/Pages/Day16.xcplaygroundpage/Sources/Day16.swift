@@ -17,6 +17,15 @@ func inputData() -> [[Int]] {
     return result
 }
 
+func program() -> [[Int]] {
+    var result = [[Int]]()
+    for s in stringsFromFile(named: "program") {
+        guard s != "" else { continue }
+        result.append(s.components(separatedBy: " ").map({ Int($0)! }))
+    }
+    return result
+}
+
 
 func addr(_ input: [Int],_ a: Int, _ b : Int, _ c: Int) -> [Int] {
     var data = input
@@ -131,3 +140,99 @@ public func part1() -> Int {
     return result
 }
 
+struct Opcode: Hashable, Equatable {
+    let name: String
+    let op: OPCODE
+    
+    func hash(into hasher: inout Hasher) {
+        name.hash(into: &hasher)
+    }
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.name == rhs.name
+    }
+}
+
+func matchOpcodes(before: [Int], instr: [Int], after: [Int], unknown: Set<Opcode>) -> Set<Opcode> {
+    var match = Set<Opcode>()
+    let a = instr[1]
+    let b = instr[2]
+    let c = instr[3]
+    
+    for f in unknown {
+        if after == f.op(before, a, b, c) {
+            match.insert(f)
+        }
+    }
+    
+    return match
+}
+
+public func part2() -> Int {
+    var unknown: Set<Opcode> = [
+        Opcode(name: "addr", op: addr),
+        Opcode(name: "addi", op: addi),
+        Opcode(name: "mulr", op: mulr),
+        Opcode(name: "muli", op: muli),
+        Opcode(name: "banr", op: banr),
+        Opcode(name: "bani", op: bani),
+        Opcode(name: "borr", op: borr),
+        Opcode(name: "bori", op: bori),
+        Opcode(name: "setr", op: setr),
+        Opcode(name: "seti", op: seti),
+        Opcode(name: "gtir", op: gtir),
+        Opcode(name: "gtri", op: gtri),
+        Opcode(name: "gtrr", op: gtrr),
+        Opcode(name: "eqir", op: eqir),
+        Opcode(name: "eqri", op: eqri),
+        Opcode(name: "eqrr", op: eqrr)
+    ]
+    
+    var guess = [Int:Set<Opcode>]()
+    var opcodes = [Int:Opcode]()
+
+    for line in inputData() {
+        let before = Array(line[0..<4])
+        let instr = Array(line[4..<8])
+        let after = Array(line[8..<12])
+        let matches = matchOpcodes(before: before, instr: instr, after: after, unknown: unknown)
+        let n = instr[0]
+        let op = matches.first!
+        if matches.count == 1 {
+            opcodes[n] = op
+            for i in 0..<16 {
+                if guess[i, default: []].contains(op) {
+                    guess[i]?.remove(op)
+                }
+            }
+        } else {
+            if let prevGuess = guess[n] {
+                guess[n] = Set(matches).intersection(prevGuess)
+            } else {
+                guess[n] = Set(matches)
+            }
+        }
+    }
+
+    while !guess.isEmpty {
+        let g = guess.filter({ $0.value.count == 1 }).first!
+        let op = g.value.first!
+        opcodes[g.key] = op
+
+        guess.removeValue(forKey: g.key)
+        for i in 0..<16 {
+            if guess[i, default: []].contains(op) {
+                guess[i]?.remove(op)
+            }
+        }
+    }
+
+    var data = [0, 0, 0, 0]
+    for p in program() {
+        guard let opcode = opcodes[p[0]] else { break }
+        let f = opcode.op
+        data = f(data, p[1], p[2], p[3])
+    }
+                   
+    return data[0]
+}
