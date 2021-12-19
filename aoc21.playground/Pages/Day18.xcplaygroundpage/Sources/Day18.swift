@@ -155,3 +155,16 @@ public func part1() -> Int {
     return magnitude(result)
 }
 
+public func part2() -> Int {
+    let tokens = inputData()
+    var result = 0
+    
+    for i in 0..<(tokens.count) {
+        for j in 0..<(tokens.count) {
+            result = max(result, magnitude(add(tokens[i], tokens[j])))
+        }
+    }
+    
+    return result
+}
+
