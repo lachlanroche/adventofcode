@@ -42,3 +42,15 @@ public func part1() -> Int {
     return maxy
 }
 
+public func part2() -> Int {
+    var maxy = 0
+    var count = 0
+    for vy in -200..<200 {
+        for vx in 10...200 {
+            if fire(vx: vx, vy: vy, maxy: &maxy) {
+                count = 1 + count
+            }
+        }
+    }
+    return count
+}
