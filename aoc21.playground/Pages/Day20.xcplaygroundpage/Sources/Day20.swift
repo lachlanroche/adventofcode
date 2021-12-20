@@ -94,3 +94,10 @@ public func part1() -> Int {
     return data.image.values.reduce(0, +)
 }
 
+public func part2() -> Int {
+    var data = inputData()
+    for _ in 0..<50 {
+        data.enhance()
+    }
+    return data.image.values.reduce(0, +)
+}
