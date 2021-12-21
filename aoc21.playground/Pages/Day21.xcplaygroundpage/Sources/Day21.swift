@@ -41,3 +41,55 @@ public func part1() -> Int {
     }
 }
 
+struct Game: Hashable {
+    var pos1 = 0
+    var pos2 = 0
+    var score1 = 0
+    var score2 = 0
+    
+    mutating func nextPlayer() {
+        var tmp = pos1
+        pos1 = pos2
+        pos2 = tmp
+        tmp = score1
+        score1 = score2
+        score2 = tmp
+    }
+}
+
+public func part2() -> Int {
+ 
+    var cache = Dictionary<Game,(Int,Int)>()
+    func wins(game: Game) -> (Int, Int) {
+        if game.score1 >= 21 {
+            return (1, 0)
+        }
+        if game.score2 >= 21 {
+            return (0, 1)
+        }
+        if let cached = cache[game] {
+            return cached
+        }
+        
+        var result = (0, 0)
+        for d1 in 1...3 {
+            for d2 in 1...3 {
+                for d3 in 1...3 {
+                    var next = game
+                    next.pos1 = (game.pos1 + d1 + d2 + d3) % 10
+                    next.score1 = game.score1 + next.pos1 + 1
+                    next.nextPlayer()
+                    let (w1, w2) = wins(game: next)
+                    
+                    result.0 = result.0 + w2
+                    result.1 = result.1 + w1
+                }
+            }
+        }
+        cache[game] = result
+        return result
+    }
+    
+    let result = wins(game: Game(pos1: 7, pos2: 4, score1: 0, score2: 0))
+    return max(result.0, result.1)
+}
