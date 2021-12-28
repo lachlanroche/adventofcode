@@ -145,5 +145,32 @@ public func part1() -> Int {
 }
 
 public func part2() -> Int {
-    return 0
+    var unknown = inputData()
+    var adjusted = [unknown.removeFirst()]
+    while !unknown.isEmpty {
+        var u = unknown.removeFirst()
+        var found = false
+        
+        for k in adjusted {
+            if u.align(with: k) {
+                adjusted.append(u)
+                found = true
+                break
+            }
+        }
+        
+        if !found {
+            unknown.append(u)
+        }
+    }
+    
+    var maxDistance = 0
+    for a in adjusted {
+        for b in adjusted {
+            let distance = a.origin.manhattan(to: b.origin)
+            maxDistance = max(maxDistance, distance)
+        }
+    }
+
+    return maxDistance
 }
