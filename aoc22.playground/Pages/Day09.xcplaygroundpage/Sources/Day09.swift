@@ -61,3 +61,26 @@ public func part1() -> Int {
     
     return visited.count
 }
+
+public func part2() -> Int {
+    var head = Point(x: 0, y: 0)
+    var tails: [Point] = .init(repeating: Point(x: 0, y: 0), count: 9)
+    var visited = Set<Point>()
+    visited.insert(tails.last!)
+    
+    for line in stringsFromFile() {
+        guard line != "" else { break }
+        let parts = line.split(separator: " ")
+        for _ in 0..<(Int(String(parts[1]))!) {
+            head.step(Direction(rawValue: String(parts[0]))!)
+            var prev = head
+            for i in 0...8 {
+                tails[i].follow(prev)
+                prev = tails[i]
+            }
+            visited.insert(tails.last!)
+        }
+    }
+    
+    return visited.count
+}
