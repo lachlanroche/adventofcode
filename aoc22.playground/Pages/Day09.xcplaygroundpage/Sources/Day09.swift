@@ -51,7 +51,7 @@ public func part1() -> Int {
     
     for line in stringsFromFile() {
         guard line != "" else { break }
-        let parts = line.split(separator: " ")        
+        let parts = line.split(separator: " ")
         for _ in 0..<(Int(String(parts[1]))!) {
             head.step(Direction(rawValue: String(parts[0]))!)
             tail.follow(head)
@@ -60,6 +60,4 @@ public func part1() -> Int {
     }
     
     return visited.count
-    var result = 0
-    return result
 }
