@@ -19,11 +19,32 @@ public func part1() -> String {
         let hash = md5("\(door)\(i)")
         if hash.hasPrefix("00000") {
             result.append(hash[5])
-            print(hash[5])
         }
         
         i += 1
     }
     
     return String(result)
+}
+
+public func part2() -> String {
+    let door = "cxdnnyjw"
+    var result = Array<Character?>(repeating: nil, count: 8)
+    var i = 0
+    while true {
+        guard result.contains(nil) else { break }
+        
+        let hash = md5("\(door)\(i)")
+        if
+            hash.hasPrefix("00000"),
+            let idx = hash[5].wholeNumberValue,
+            0...7 ~= idx,
+            result[idx] == nil
+        {
+            result[idx] = hash[6]
+        }
+        i += 1
+    }
+    
+    return String(result.compactMap({ $0 }))
 }
