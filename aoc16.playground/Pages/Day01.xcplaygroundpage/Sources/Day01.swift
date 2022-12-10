@@ -7,7 +7,7 @@ enum Direction: Character {
     case up = "U"
 }
 
-struct Point {
+struct Point: Hashable, Equatable {
     var x: Int
     var y: Int
     var direction: Direction = .up
@@ -44,6 +44,14 @@ struct Point {
     func manhattan(_ p: Point) -> Int {
         return abs(x - p.x) + abs(y - p.y)
     }
+    
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.x == rhs.x && lhs.y == rhs.y
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        [x, y].hash(into: &hasher)
+    }
 }
 
 public func part1() -> Int {
@@ -60,3 +68,22 @@ public func part1() -> Int {
     return p.manhattan(.origin)
 }
 
+public func part2() -> Int {
+    var seen = Set<Point>()
+    var p = Point.origin
+    seen.insert(p)
+    for line in stringsFromFile() {
+        guard line != "" else { break }
+        for part in line.components(separatedBy: ", ") {
+            p.turn(Direction(rawValue: part[0])!)
+            for _ in 0..<(Int(part.substring(fromIndex: 1))!) {
+                p.step()
+                if seen.contains(p) {
+                    return p.manhattan(.origin)
+                }
+                seen.insert(p)
+            }
+        }
+    }
+    return 0
+}
