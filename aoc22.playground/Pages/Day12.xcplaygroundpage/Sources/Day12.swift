@@ -18,6 +18,37 @@ struct Point: Hashable, Equatable {
     }
 }
 
+struct World {
+    let world: Dictionary<Point, Int>
+    let start: Point
+    let goal: Point
+}
+
+func inputData() -> World {
+    var world = Dictionary<Point, Int>()
+    var start = Point(x: 0, y: 0)
+    var goal = Point(x: 0, y: 0)
+    var y = 0
+    for line in stringsFromFile() where line != "" {
+        var x = 0
+        for ch in line {
+            let p = Point(x: x, y: y)
+            var value = Int(ch.asciiValue!) - 97
+            if ch == "S" {
+                start = p
+                value = 0
+            } else if ch == "E" {
+                goal = p
+                value = 25
+            }
+            world[p] = value
+            x += 1
+        }
+        y += 1
+    }
+    return World(world: world, start: start, goal: goal)
+}
+
 func bfs(start: Point, goal: (Point) -> Bool, world: Dictionary<Point, Int>) -> [Point] {
     var queue = [Point]()
     queue.append(start)
@@ -44,26 +75,7 @@ func bfs(start: Point, goal: (Point) -> Bool, world: Dictionary<Point, Int>) -> 
 }
 
 public func part1() -> Int {
-    var world = Dictionary<Point, Int>()
-    var start = Point(x: 0, y: 0)
-    var goal = Point(x: 0, y: 0)
-    var y = 0
-    for line in stringsFromFile() where line != "" {
-        var x = 0
-        for ch in line {
-            let p = Point(x: x, y: y)
-            var value = Int(ch.asciiValue!) - 97
-            if ch == "S" {
-                start = p
-                value = 0
-            } else if ch == "E" {
-                goal = p
-                value = 25
-            }
-            world[p] = value
-            x += 1
-        }
-        y += 1
-    }
-    return bfs(start: start, goal: { $0 == goal }, world: world).count
+    let data = inputData()
+    return bfs(start: data.start, goal: { $0 == data.goal }, world: data.world).count
+}
 }
