@@ -78,4 +78,15 @@ public func part1() -> Int {
     let data = inputData()
     return bfs(start: data.start, goal: { $0 == data.goal }, world: data.world).count
 }
+
+public func part2() -> Int {
+    let data = inputData()
+    var result = Int.max
+    for p in data.world where p.value == 0 {
+        let steps = bfs(start: p.key, goal: { $0 == data.goal }, world: data.world).count
+        if steps != 0 {
+            result = min(result, steps)
+        }
+    }
+    return result
 }
