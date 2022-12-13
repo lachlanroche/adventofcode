@@ -78,6 +78,15 @@ public func part1() -> Int {
     inputData().enumerated().reduce(0) { $1.element.0.compare($1.element.1) ? $0 + 1 + $1.offset : $0 }
 }
 
+public func part2() -> Int {
+    let signals = inputData().flatMap({ [$0.0, $0.1] })
+    let a: Value = [[2]]
+    let aIndex = signals.reduce(1) { $1.compare(a) ? $0 + 1 : $0  }
+    let b: Value = [[6]]
+    let bIndex = signals.reduce(2) { $1.compare(b) ? $0 + 1 : $0  }
+    return aIndex * bIndex
+}
+
 func testData() -> [(Value, Value)] {
     [
         ([1,1,3,1,1], [1,1,5,1,1]),
