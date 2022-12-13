@@ -32,3 +32,30 @@ public func part1() -> Int {
     }
     return output.count
 }
+
+public func part2() -> Int {
+    let input = Array(stringsFromFile()[0])
+    var result = 0
+    var weights = Array(repeating: 1, count: input.count)
+    var marker: [Character]? = nil
+    for (i, ch) in input.enumerated() {
+        if let buffer = marker {
+            if ch == ")" {
+                let parts = String(buffer).split(separator: "x")
+                marker = nil
+                let length = Int(parts[0])!
+                let count = Int(parts[1])!
+                for j in (i+1)...(i+length) where j < weights.count {
+                    weights[j] *= count
+                }
+            } else {
+                marker?.append(ch)
+            }
+        } else if ch == "(" {
+            marker = []
+        } else {
+            result += weights[i]
+        }
+    }
+    return result
+}
