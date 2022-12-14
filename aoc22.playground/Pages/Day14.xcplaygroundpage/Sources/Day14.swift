@@ -29,7 +29,7 @@ func boundingBox(_ canvas: Dictionary<Point, Character>) -> (Point, Point) {
         minX = min(minX, k.x)
         minY = min(minY, k.y)
     }
-    return (Point(x: minX - 1, y: minY - 1), Point(x: maxX + 1, y: maxY + 1))
+    return (Point(x: minX, y: minY), Point(x: maxX, y: maxY))
 }
 
 func makeCanvas(_ lines: [[Point]]) -> Dictionary<Point, Character> {
@@ -60,8 +60,8 @@ func makeCanvas(_ lines: [[Point]]) -> Dictionary<Point, Character> {
 func canvasAsString(_ canvas: Dictionary<Point, Character>) -> String {
     var result = [Character]()
     let bounds = boundingBox(canvas)
-    for y in (bounds.0.y)...(bounds.1.y) {
-        for x in (bounds.0.x)...(bounds.1.x) {
+    for y in (bounds.0.y - 1)...(bounds.1.y + 1) {
+        for x in (bounds.0.x - 1)...(bounds.1.x + 1) {
             if let ch = canvas[Point(x: x, y: y)] {
                 result.append(ch)
             } else {
@@ -103,7 +103,23 @@ public func part1() -> Int {
     var canvas = makeCanvas(inputData())
     let bounds = boundingBox(canvas)
     var result = 0
-    while dropSand(at: Point(x: 500, y: 0), maxY: bounds.1.y, in: &canvas) {
+    while dropSand(at: Point(x: 500, y: 0), maxY: bounds.1.y + 2, in: &canvas) {
+        result += 1
+    }
+    return result
+}
+
+public func part2() -> Int {
+    var canvas = makeCanvas(inputData())
+    let bounds = boundingBox(canvas)
+    for x in -1000...1000 {
+        let q = Point(x: x, y: bounds.1.y + 2)
+        canvas[q] = "#"
+    }
+    let origin = Point(x: 500, y: 0)
+    var result = 0
+    while nil == canvas[origin] {
+        _ = dropSand(at: origin, maxY: bounds.1.y + 3, in: &canvas)
         result += 1
     }
     return result
