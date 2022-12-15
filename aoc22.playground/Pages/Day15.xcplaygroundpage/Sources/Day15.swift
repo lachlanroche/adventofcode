@@ -7,6 +7,21 @@ struct Point: Hashable, Equatable {
     func manhattan(_ p: Point) -> Int {
         abs(p.x - x) + abs(p.y - y)
     }
+    
+    func justBeyond(_ d: Int) -> [Point] {
+        var points = [Point]()
+        for dx in 0...(d+1) {
+            let dy = d + 1 - dx
+            points.append(contentsOf: [
+                Point(x: x - dx , y: y - dy),
+                Point(x: x - dx , y: y + dy),
+                Point(x: x + dx , y: y - dy),
+                Point(x: x + dx , y: y + dy)
+            ])
+        
+        }
+        return points
+    }
 }
 
 func inputData() -> [(Point,Point)] {
@@ -31,7 +46,7 @@ func boundingBox(_ points: [(Point,Point)]) -> (Point, Point) {
     var maxX = Int.min
     var maxY = Int.min
     for (p, q) in points {
-        var distance = p.manhattan(q)
+        let distance = p.manhattan(q)
         minX = min(minX, p.x - distance)
         maxX = max(maxX, p.y + distance)
         minY = min(minY, p.x - distance)
@@ -58,3 +73,23 @@ public func part1() -> Int {
     return result
 }
 
+func available(_ q: Point, _ points: [(Point,Point)]) -> Bool {
+    for p in points {
+        if q == p.1 {
+            return false
+        } else if p.0.manhattan(q) <= p.0.manhattan(p.1) {
+            return false
+        }
+    }
+    return true
+}
+
+public func part2() -> Int {
+    let points = inputData()
+    for p in points.flatMap({ $0.justBeyond($0.manhattan($1)) }) where 0...4_000_000 ~= p.y && 0...4_000_000 ~= p.y {
+        if available(p, points) {
+            return p.x * 4000000 + p.y
+        }
+    }
+    return -1
+}
