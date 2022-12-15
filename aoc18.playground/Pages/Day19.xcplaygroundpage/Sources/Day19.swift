@@ -153,3 +153,21 @@ public func part1() -> Int {
     return computer.mem[0]
 }
 
+public func part2a() -> Int {
+    var pc = 0
+    let program = program(pc: &pc)
+    var computer = Computer(pc: pc, program: program)
+    computer.mem[0] = 1
+    while computer.step() {}
+    return computer.mem[0]
+}
+// ran that for a while to get 10551364
+
+public func part2() -> Int {
+    var answer = 0
+    let target = 10551364
+    for i in 1 ... target {
+        if target % i == 0 { answer += i }
+    }
+    return answer
+}
