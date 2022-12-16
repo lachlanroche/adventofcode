@@ -3,6 +3,7 @@ import Foundation
 struct World {
     var flow = Dictionary<String, Int>()
     var edge = Dictionary<String, Set<String>>()
+    var costs = Dictionary<String, [(String, Int)]>()
 }
 
 func inputData() -> World {
@@ -27,6 +28,22 @@ func inputData() -> World {
             }
             world.edge[valve]?.insert(connection)
             world.edge[connection]?.insert(valve)
+        }
+    }
+    let nodes = Set(world.flow.keys)
+    for n in nodes.union(["AA"]) {
+        world.costs[n] = []
+    }
+    for e in nodes {
+        var path = bfs(start: "AA", goal: e, world: world)
+        if !path.isEmpty {
+            world.costs["AA"]?.append((e, path.count))
+        }
+        for f in nodes where e != f {
+            path = bfs(start: e, goal: f, world: world)
+            if !path.isEmpty {
+                world.costs[e]?.append((f, path.count))
+            }
         }
     }
     return world
@@ -58,43 +75,24 @@ func bfs(start: String, goal: String, world: World) -> [String] {
     return []
 }
 
+func search(_ world: World, _ seen: Set<String>, _ flow: Int, _ cur: String, _ timeLeft: Int, _ result: inout Int) {
+    if flow > result {
+        result = flow
+    }
+    if timeLeft <= 0 {
+        return
+    }
+    if !seen.contains(cur) {
+        search(world, seen.union([cur]), flow + world.flow[cur]! * timeLeft, cur, timeLeft - 1, &result)
+    } else {
+        for n in world.costs[cur]! where !seen.contains(n.0) {
+            search(world, seen, flow, n.0, timeLeft - n.1, &result)
+        }
+    }
+}
+
 public func part1() -> Int {
-    let world = inputData()
-    let nodes = Set(world.flow.keys)
-    var costs = Dictionary<String, [(String, Int, Int)]>()
-    for n in nodes.union(["AA"]) {
-        costs[n] = []
-    }
-    for e in nodes {
-        var path = bfs(start: "AA", goal: e, world: world)
-        if !path.isEmpty {
-            costs["AA"]?.append((e, path.count, world.flow[e]!))
-        }
-        for f in nodes where e != f {
-            path = bfs(start: e, goal: f, world: world)
-            if !path.isEmpty {
-                costs[e]?.append((f, path.count, world.flow[f]!))
-            }
-        }
-    }
-    
-    func search(_ seen: Set<String>, _ flow: Int, _ cur: String, _ timeLeft: Int, _ result: inout Int) {
-        if flow > result {
-            result = flow
-        }
-        if timeLeft <= 0 {
-            return
-        }
-        if !seen.contains(cur) {
-            search(seen.union([cur]), flow + world.flow[cur]! * timeLeft, cur, timeLeft - 1, &result)
-        } else {
-            for n in costs[cur]! where !seen.contains(n.0) {
-                search(seen, flow, n.0, timeLeft - n.1, &result)
-            }
-        }
-    }
-    
     var result = 0
-    search(Set(["AA"]), 0, "AA", 29, &result)
+    search(inputData(), Set(["AA"]), 0, "AA", 29, &result)
     return result
 }
