@@ -96,3 +96,60 @@ public func part1() -> Int {
     search(inputData(), Set(["AA"]), 0, "AA", 29, &result)
     return result
 }
+
+func paths(_ world: World, _ path: [(String, Int)], _ cur: String, _ timeLeft: Int, _ result: inout [[(String, Int)]]) {
+    if timeLeft <= 0 {
+        result.append(path)
+        return
+    }
+    if !path.contains(where: { $0.0 == cur }) {
+        paths(world, path + [(cur, timeLeft)], cur, timeLeft - 1, &result)
+    } else {
+        for n in world.costs[cur]! where !path.contains(where: { $0.0 == n.0 }) {
+            paths(world, path, n.0, timeLeft - n.1, &result)
+        }
+    }
+}
+
+struct Path: Equatable {
+    let path: [String]
+    let points: Set<String>
+    let flow: Int
+    
+    init(path: [String], flow: Int) {
+        self.path = path
+        self.flow = flow
+        points = Set(path)
+    }
+}
+
+public func part2() -> Int {
+    let world = inputData()
+    var allPaths = [[(String, Int)]]()
+    paths(world, [("AA", 0)], "AA", 25, &allPaths)
+    var computed: [Path] = allPaths.map { p in
+        Path(
+            path: p.reduce(into: [String](), { if "AA" != $1.0 { $0.append($1.0) }}),
+            flow: p.reduce(0, { $0 + $1.1 * (world.flow[$1.0] ?? 0) })
+        )
+    }
+    var best = Dictionary<Set<String>, Path>()
+    for p in computed {
+        if let prev = best[p.points] {
+            if p.flow > prev.flow {
+                best[p.points] = p
+            }
+        } else {
+            best[p.points] = p
+        }
+    }
+    computed = best.values.sorted(by: { $0.flow < $1.flow })
+    var result = -1
+    for p in computed {
+        for q in computed{
+            guard p.points.intersection(q.points).isEmpty else { continue }
+            result = max(result, q.flow + p.flow)
+        }
+    }
+    return result
+}
