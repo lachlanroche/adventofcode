@@ -95,6 +95,23 @@ func show(_ canvas: Set<Point>, _ block: Block) -> String {
     return String(result)
 }
 
+func show(_ canvas: Set<Point>) -> String {
+    let maxY = canvas.reduce(0) { max($0, $1.y) }
+    var result = [Character]()
+    for y in (-1 * maxY)...0 {
+        for x in 0...6 {
+            let p = Point(x: x, y: -1 * y)
+            if canvas.contains(p) {
+                result.append("#")
+            } else {
+                result.append(".")
+            }
+        }
+        result.append("\n")
+    }
+    return String(result)
+}
+
 public func part1() -> Int {
     let wind = stringsFromFile()[0].compactMap { Direction(rawValue: $0) }
     func shape(_ i: Int) -> Shape {
@@ -119,3 +136,37 @@ public func part1() -> Int {
     return 1 + canvas.reduce(0) { max($0, $1.y) }
 }
 
+public func part2() -> Int {
+    let wind = stringsFromFile()[0].compactMap { Direction(rawValue: $0) }
+    func shape(_ i: Int) -> Shape {
+        Shape.allCases[i % 5]
+    }
+    var cache = Dictionary<Int, (Int, Int)>()
+    var height = 0
+    var canvas = Set<Point>()
+    var y = 3
+    var w = 0
+    for s in 0..<1_000_000 {
+        var block = Block(coord: Point(x: 2, y: y), shape: shape(s))
+        let key = (s%5) + (w << 3)
+        if s > 2022, let cached = cache[key] {
+            let (q, r) = (1_000_000_000_000 - s).quotientAndRemainder(dividingBy: s - cached.0)
+            if r == 0 {
+                return height + q * (height - cached.1)
+            }
+        }
+        cache[key] = (s, height)
+        while true {
+            block.push(wind[w], in: canvas)
+            w = (w + 1) % wind.count
+            if !block.fall(in: canvas) {
+                let points = block.points
+                canvas.formUnion(points)
+                y = 4 + canvas.reduce(0) { max($0, $1.y) }
+                break
+            }
+        }
+        height = 1 + canvas.reduce(0, { max($0, $1.y) })
+    }
+    return -1
+}
