@@ -8,9 +8,10 @@ struct Blueprint {
     let obsidianClay: Int
     let geodeOre: Int
     let geodeObsidian: Int
+    let magic: Int
 }
 
-func inputData() -> [Blueprint] {
+func inputData(_ magic: Int) -> [Blueprint] {
     var result = [Blueprint]()
     for line in stringsFromFile() where line != "" {
         let parts = line.replacingOccurrences(of: ":", with: "").split(separator: " ")
@@ -21,7 +22,8 @@ func inputData() -> [Blueprint] {
             obsidianOre: Int(parts[18])!,
             obsidianClay: Int(parts[21])!,
             geodeOre: Int(parts[27])!,
-            geodeObsidian: Int(parts[30])!
+            geodeObsidian: Int(parts[30])!,
+            magic: magic
         ))
     }
     return result
@@ -58,7 +60,11 @@ extension Blueprint {
     }
 }
 public func part1() -> Int {
-    inputData().map({ $0.id * $0.geodes(1, 0, 0, 0, 0, 0, 0, 0, 23) })
+    inputData(5).map({ $0.id * $0.geodes(1, 0, 0, 0, 0, 0, 0, 0, 23) })
         .reduce(0, +)
 }
 
+public func part2() -> Int {
+    inputData(4).prefix(3).map({ $0.geodes(1, 0, 0, 0, 0, 0, 0, 0, 31) })
+        .reduce(1, *)
+}
