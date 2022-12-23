@@ -125,3 +125,45 @@ public func part1() -> Int {
     let bounds = boundingBox(canvas)
     return (bounds.1.x - bounds.0.x + 1) * (bounds.1.y - bounds.0.y + 1) - canvas.count
 }
+
+public func part2() -> Int {
+    var canvas = inputData()
+    var checks: [Check] = [.north, .south, .west, .east]
+    for i in 1...100_000 {
+        var newCanvas = Set<Point>()
+        var proposed = Dictionary<Point, Set<Point>>()
+        for e in canvas {
+            if canvas.intersection(e.neighbors()).isEmpty {
+                newCanvas.insert(e)
+                continue
+            }
+            var stepped = false
+            for check in checks {
+                if Set(e.look(check)).intersection(canvas).isEmpty {
+                    let step = e.step(check)
+                    proposed[step] = proposed[step] ?? []
+                    proposed[step]!.insert(e)
+                    stepped = true
+                    break
+                }
+            }
+            if !stepped {
+                newCanvas.insert(e)
+            }
+        }
+        if newCanvas == canvas {
+            return i
+        }
+        for (q, pp) in proposed {
+            if pp.count == 1 {
+                newCanvas.insert(q)
+            } else {
+                newCanvas.formUnion(pp)
+            }
+        }
+        canvas = newCanvas
+        checks.append(checks.remove(at: 0))
+    }
+    let bounds = boundingBox(canvas)
+    return (bounds.1.x - bounds.0.x + 1) * (bounds.1.y - bounds.0.y + 1) - canvas.count
+}
