@@ -129,13 +129,16 @@ func inputData() -> World {
     )
 }
 
-func bfs(world: World) -> Int {
+func bfs(world: World, traversals: Int) -> Int {
+    var goal = world.goal
+    var start = world.start
     var canvas = world
     var queue = [Point]()
-    queue.append(world.start)
+    queue.append(start)
     var nextQueue = Set<Point>()
     var t = -1
-
+    var traversal = 1
+    
     while !(queue.isEmpty && nextQueue.isEmpty) {
         if queue.isEmpty {
             queue = Array(nextQueue.sorted(by: { world.goal.manhattan($0) < world.goal.manhattan($1)}).prefix(2000))
@@ -144,8 +147,23 @@ func bfs(world: World) -> Int {
             t += 1
         }
         let cur = queue.remove(at: 0)
-        if world.goal == cur {
-            return t
+        if goal == cur {
+            if traversal == traversals {
+                return t
+            }
+            if 0 == traversal % 2 {
+                goal = world.goal
+                start = world.start
+            } else {
+                goal = world.start
+                start = world.goal
+            }
+            traversal += 1
+            queue = []
+            queue.append(start)
+            nextQueue = []
+            canvas.step()
+            t += 1
         }
         for n in cur.neighbors() where canvas.contains(n) {
             nextQueue.insert(n)
@@ -155,6 +173,9 @@ func bfs(world: World) -> Int {
 }
 
 public func part1() -> Int {
-    bfs(world: inputData())
+    bfs(world: inputData(), traversals: 1)
 }
 
+public func part2() -> Int {
+    bfs(world: inputData(), traversals: 3)
+}
